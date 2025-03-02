@@ -1,0 +1,61 @@
+---
+- name: Stop and disable kubelet
+  systemd:
+    state: stopped
+    name: kubelet
+    enabled: false
+  failed_when: false
+  become: true
+
+- name: "Reset kubeadm"
+  command: "kubeadm reset -f"
+  failed_when: false
+  become: true
+
+- name: Remove Kubernetes packages - kubeadm, kubelet, kubectl
+  yum:
+    name: "{{ packages }}"
+    state: absent
+    disable_excludes: kubernetes
+  vars:
+    packages:
+      - kubeadm-{{k8s_version}}
+      - kubectl-{{k8s_version}}
+      - kubelet-{{k8s_version}}
+  failed_when: false
+  become: true
+
+- name: Remove k8s config folder for os user
+  file:
+    path: ".kube"
+    state: absent
+  failed_when: false
+
+
+
+- name: Reenable SWAP in fstab (1/2)
+  replace:
+    path: /etc/fstab
+    regexp: '^# (.+?\sswap\s+sw\s+.*)$'
+    replace: '\1'
+  become: true
+
+- name: Enable SWAP (2/2)
+  shell: |
+    swapon -a
+  become: true
+
+
+
+# - name: "Uninstall docker"
+#   include_tasks: "remove_docker.yml"
+#   when: install_docker | bool
+
+# - name: "Uninstall containerd"
+#   include_tasks: "remove_containerd.yml"
+#   when: install_containerd | bool
+
+# - name: "Uninstall crio"
+#   include_tasks: "remove_crio.yml"
+#   when: install_crio | bool
+...

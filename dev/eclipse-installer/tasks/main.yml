@@ -1,0 +1,56 @@
+---
+# tasks file for common
+- name: Install required packages
+  package:
+    name: " {{required_packages}} "
+    state: present
+  become: true
+- name: Download eclipse IDE
+  get_url:
+    url: "{{eclipse_url}}"
+    dest: "/tmp/eclipse.tar.gz"
+  register: get_url_stat
+- name: Debug get_url
+  debug:
+    msg: "{{ get_url_stat }}"
+- name: Create Eclipse tmp folder
+  file:
+    path: '/tmp/eclipse'
+    state: directory
+  become: true
+- name: Unarchive
+  unarchive:
+    src: "/tmp/eclipse.tar.gz"
+    dest: "/tmp/eclipse/"
+    remote_src: true
+  become: true
+- name: Unarchived folder name
+  command: 'ls /tmp/eclipse/'
+  register: eclipse_folders
+- name: Debug eclipse folder
+  debug:
+    msg: "{{ eclipse_folders.stdout_lines[0] }}"
+- name: Create EclipseIDE folder
+  file:
+    path: '/opt/eclipse'
+    state: directory
+  become: true
+  when: delete_eclipse_folder is defined and delete_eclipse_folder == true
+- name: Move folder
+  command: "mv /tmp/eclipse/{{ eclipse_folders.stdout_lines[0] }}/ /opt/eclipse/"
+  become: true
+- name: Change owner
+#  command: "chown \"{{owner_user}}\":\"{{owner_user}}\" -R /opt/eclipse"
+  file:
+    path: '/opt/eclipse'
+    state: directory
+    owner: "{{owner_user}}"
+    group: "{{owner_user}}"
+    recurse: yes
+  become: true
+- name: Remove EclipseIDE tmp folder
+  file:
+    path: '/tmp/eclipse'
+    state: absent
+  become: true
+...

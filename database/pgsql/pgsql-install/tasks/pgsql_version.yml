@@ -1,0 +1,71 @@
+---
+#- name: Install PostgreSQL repository
+#  yum_repository:
+#    name: postgresql
+#    description: PostgreSQL repository
+#    baseurl: "{{pgsql_repo_url}}"
+#  become: true
+- name: Install PostgreSql repository
+  yum: name={{pgsql_repo_url}} state=present
+  become: true
+- name: Install PostgreSql packages
+  yum:
+    name: "{{pgsql_packages_version[pgsql_version]}}"
+    state: present
+#    releasever: "{{pgsql_version}}"
+  become: true
+- name: Check contents of data directory
+  find:
+    paths: "/var/lib/pgsql/{{pgsql_version}}/data"
+    file_type: directory
+    patterns: "."
+  register: psql_data_files
+- name: Initialize pgSql
+  shell: "/usr/pgsql-{{pgsql_version}}/bin/postgresql-{{pgsql_version}}-setup initdb"
+  register: pgsql_init_reg
+  become: true
+  when: psql_data_files.matched|int != 0
+#  notify:
+#    - Start PostgreSQL service
+#    - Enable PostgreSQL service
+- name: Enable PostgreSQL service
+  service:
+    name: "postgresql-{{pgsql_version}}"
+    enabled: true
+  become: true
+- name: Start PostgreSQL {{pgsql_version}} service
+  service:
+    name: "postgresql-{{pgsql_version}}"
+    state: started
+    enabled: true
+  become: true
+- name: Change postgres password
+  shell: "sudo -u postgres psql -c \"ALTER USER {{postgres_user}} PASSWORD '{{postgres_pw}}'\""
+  become: true
+- name: Uncomment listen_addresses
+  replace:
+    path: "/var/lib/pgsql/{{pgsql_version}}/data/postgresql.conf"
+    regexp: "^#listen_addresses"
+    replace: "listen_addresses"
+    backup: yes
+  notify:
+    - Restart PostgreSQL {{pgsql_version}} service
+  become: true
+- name: Enable conections from LAN
+  replace:
+    path: "/var/lib/pgsql/{{pgsql_version}}/data/postgresql.conf"
+    regexp: "^listen_addresses = 'localhost'"
+    replace: "listen_addresses = '*'"
+  notify:
+    - Restart PostgreSQL {{pgsql_version}} service
+  become: true
+#   host    all             all             192.168.199.0/24          password
+#- name: Enable conections from LAN
+#  lineinfile:
+#    path: "/var/lib/pgsql/{{pgsql_version}}/data/pg_hba.conf"
+#    regexp: "^listen_addresses = 'localhost'"
+#    replace: "listen_addresses = '*'"
+#  notify:
+#    - Restart PostgreSQL service
+#  become: true
+...

@@ -1,0 +1,8 @@
+---
+#- name: Change local authentication method
+#
+- include_tasks: pgsql-database.yml
+  loop: "{{pgsql_databases|flatten(levels=1)}}"
+  loop_control:
+    loop_var: loop_item
+...

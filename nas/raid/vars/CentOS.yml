@@ -1,0 +1,4 @@
+---
+raid_packages:
+    - mdadm
+...

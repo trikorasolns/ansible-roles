@@ -1,0 +1,56 @@
+---
+- name: "Remove controller config file"
+  ansible.builtin.import_role:
+    name: "container/k8s/k8s-{{ k8s_maj_min }}/k8s_config"
+  vars:
+    state: "absent"
+
+- name: "Reset kubeadm"
+  ansible.builtin.shell: |
+    kubeadm reset -f
+  become: true
+  register: kubeadm_reset_res
+  failed_when: "kubeadm_reset_res.rc != 0 and 'No such file or directory' not in kubeadm_reset_res.msg"
+
+- name: "Print result if rc is not 0"
+  ansible.builtin.debug:
+    msg: "{{ kubeadm_reset_res }}"
+  when: "kubeadm_reset_res.rc != 0"
+
+- name: "Remove Kubernetes packages - kubeadm, kubelet, kubectl"
+  ansible.builtin.package:
+    name: "{{ packages }}"
+    state: absent
+    disable_excludes: kubernetes
+  vars:
+    packages: "{{ k8s_packages }}"
+  become: true
+
+- name: "Remove CNI"
+  # ansible.builtin.file:
+  #   state: absent
+  #   path: "/etc/cni/net.d"
+  # become: true
+  ansible.builtin.include_role:
+    name: "container/k8s/k8s-{{ k8s_maj_min }}/k8s_cni"
+  vars:
+    state: absent
+
+- name: "Remove /etc/kubernetes"
+  ansible.builtin.file:
+    state: absent
+    path: "/etc/kubernetes"
+  become: true
+
+- name: "Remove kubernetes repository"
+  ansible.builtin.yum_repository:
+    name: kubernetes
+    state: absent
+  become: true
+
+- name: "Remove HOME/.kube"
+  ansible.builtin.file:
+    state: absent
+    path: "{{ ansible_env.HOME }}/.kube/"
+
+...

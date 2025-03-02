@@ -1,0 +1,8 @@
+---
+# tasks file for common
+- name: Install office packages
+  package:
+    name: "{{office_packages}}"
+    state: present
+  become: true
+...

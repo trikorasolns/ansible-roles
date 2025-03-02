@@ -1,0 +1,14 @@
+---
+required_packages:
+    - epel-release
+
+nginx_packages:
+#    - epel-release
+    - nginx
+# SSL
+#    - openssl
+#    - mod_ssl
+firewall_services:
+    - http
+#    - https # SSL
+...

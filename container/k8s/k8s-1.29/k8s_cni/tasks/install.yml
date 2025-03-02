@@ -1,0 +1,9 @@
+---
+- name: "Install Flannel CNI"
+  include_tasks: install_cni_flannel.yml
+  when: "cni == 'flannel'"
+
+- name: "Install Calico CNI"
+  include_tasks: install_cni_calico.yml
+  when: "cni == 'calico'"
+...

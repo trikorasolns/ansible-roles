@@ -1,0 +1,64 @@
+---
+- name: Install PgSql packages
+  package: name={{pgsql_packages}} state=present
+  become: true
+- name: Check for folder /var/lib/pgsql/data
+  stat:
+    path: /var/lib/pgsql/data
+  become: true
+  register: pgdata_stat
+- name: Initialize pgSql
+  shell: postgresql-setup initdb
+  register: pgsql_init_reg
+  become: true
+  when: pgdata_stat.stat.exists == False
+- name: Debug pgSql init
+  debug:
+    msg: "{{pgsql_init_reg}}"
+  when: pgsql_init_reg is defined
+#  notify:
+#    - Start PostgreSQL service
+#    - Enable PostgreSQL service
+- name: Enable PostgreSQL service
+  service: 
+    name: postgresql 
+    enabled: true
+  become: true
+- name: Start PostgreSQL service
+  service: 
+    name: postgresql 
+    state: started
+    enabled: true
+  become: true
+#- name: Change postgres password
+#  shell: "sudo -u postgres psql -c \"ALTER USER {{postgres_user}} PASSWORD '{{postgres_pw}}'\""
+#  become: true
+- name: Change postgres password
+  shell: "psql -c \"ALTER USER {{postgres_user}} PASSWORD '{{postgres_pw}}'\""
+  become: true
+  become_user: postgres
+- name: Uncomment listen_addresses
+  replace:
+    path: /var/lib/pgsql/data/postgresql.conf
+    regexp: "^#listen_addresses"
+    replace: "listen_addresses"
+  notify:
+    - Restart PostgreSQL service
+  become: true
+- name: Enable conections from LAN
+  replace:
+    path: /var/lib/pgsql/data/postgresql.conf
+    regexp: "^listen_addresses = 'localhost'"
+    replace: "listen_addresses = '*'"
+  notify:
+    - Restart PostgreSQL service
+  become: true
+- name: Allow user authentication with md5
+  replace:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    regexp: "^listen_addresses = 'localhost'"
+    replace: "listen_addresses = '*'"
+  notify:
+    - Restart PostgreSQL service
+  become: true
+...

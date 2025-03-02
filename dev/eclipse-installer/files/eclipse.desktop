@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Eclipse IDE
+GenericName=Eclipse IDE
+Exec=/opt/idea-IC/bin/idea.sh
+Path=/opt/idea-IC/bin/
+Icon=/opt/idea-IC/bin/idea.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Development
+
+X-Desktop-File-Install-Version=0.15

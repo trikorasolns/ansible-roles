@@ -1,0 +1,24 @@
+---
+# handlers file for PostgreSQL
+- name: Enable PostgreSQL service
+  service: 
+    name: postgresql 
+    enabled: true
+  become: true
+- name: Restart PostgreSQL service
+  service: 
+    name: postgresql
+    state: restarted
+  become: true
+- name: Restart PostgreSQL 10 service
+  service: 
+    name: postgresql-10
+    state: restarted
+  become: true
+- name: Restart firewalld
+  service: name=firewalld state=restarted
+  become: true
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: true
+...

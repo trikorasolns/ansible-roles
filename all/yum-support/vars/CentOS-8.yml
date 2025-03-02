@@ -1,0 +1,6 @@
+---
+# python3-rpkg python3-dlrn
+yum_install_command: dnf install -y python3-dnf python3-libselinux --nogpgcheck
+
+yum_python_install_raw: dnf install -y python36
+...

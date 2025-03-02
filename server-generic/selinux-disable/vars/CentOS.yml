@@ -1,0 +1,12 @@
+---
+k8s_packages:
+    - kubernetes
+    - kubernetes-master
+    - kubernetes-client
+    - kubernetes-ansible
+    - kubelet
+    - kubeadm
+    - kubectl
+docker_packages:
+    - docker
+...

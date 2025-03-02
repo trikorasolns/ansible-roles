@@ -1,0 +1,39 @@
+---
+# tasks file for docker
+- name: Create devops user group
+  group:
+    name: devops
+    state: present
+  become: true
+
+- name: Create the devops user.
+  user:
+    name: "dvo123"
+    comments: DevOps
+    password: "{{ lookup('passwordstore', 'it/dvo123' ) }}"
+    groups: devops, wheel
+    append: yes
+  become: true
+
+- name: Add the ansible user to the devops group.
+  user:
+    name: "{{ansible_user}}"
+    groups: devops
+    append: yes
+  become: true
+
+- name: Install dev packages
+  package:
+    name: "{{dev_packages}}"
+    state: present
+  become: true
+
+- name: Create user namespaces
+  lineinfile:
+    path: "/etc/subuid"
+    regexp: "^{{ item }}"
+    line: "{{ item }}:100000:65536"
+  loop:
+    - "sysadm"
+    - "dvo123"
+...

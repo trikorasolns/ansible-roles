@@ -1,0 +1,7 @@
+---
+- name: Install Remmina
+  package:
+    name: "{{ remmina_packages }}"
+    state: present
+  become: true
+...

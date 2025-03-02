@@ -1,0 +1,19 @@
+---
+- name: "Validate state"
+  assert:
+    that: state == "absent" or state == "present"
+    fail_msg: "state must be either absent or present"
+
+- name: "Remove docker"
+  include_tasks: remove.yml
+  when: state == "absent"
+
+- name: "Populate service facts"
+  ansible.builtin.service_facts:
+  when: state == "present"
+
+- name: "Install docker"
+  include_tasks: install.yml
+  when: "(state == 'present') and (not ('docker.service' in ansible_facts.services ) or (ansible_facts.services['docker.service'].state != 'running') )"
+
+...

@@ -1,0 +1,12 @@
+---
+- name: "Install FreeIpa"
+  shell: "ipa-server-install --uninstall"
+  become: true
+  register: free_ipa_install
+
+- name: "Remove FreeIpa packages"
+  package: 
+    name: "{{ free_ipa_packages }}"
+    state: absent
+  become: true
+...

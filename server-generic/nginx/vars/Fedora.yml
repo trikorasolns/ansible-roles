@@ -1,0 +1,8 @@
+---
+nginx_packages:
+    - nginx
+
+firewall_services:
+    - http
+    - https # SSL
+...

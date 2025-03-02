@@ -1,0 +1,5 @@
+---
+dhcp_packages:
+    - dhcp
+...
+# foreman-bootloaders-redhat foreman-bootloaders-redhat-tftpboot foreman-discovery-image-service tfm-rubygem-ovirt_provision_plugin tfm-rubygem-foreman_rescue rubygem-smart_proxy_monitoring 

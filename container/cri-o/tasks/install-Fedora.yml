@@ -1,0 +1,54 @@
+# https://cri-o.io/
+---
+- name: "Copy crio.conf file"
+  ansible.builtin.copy:
+    src: "files/modules-load.d/crio.conf"
+    dest: "/etc/modules-load.d/crio.conf"
+  become: true
+
+- name: "Copy 99-kubernetes-cri file"
+  ansible.builtin.copy:
+    src: "files/sysctl.d/99-kubernetes-cri.conf"
+    dest: "/etc/sysctl.d/99-kubernetes-cri.conf"
+  become: true
+
+- name: "Enable crio-o module"
+  shell: "dnf module enable -y cri-o:{{ crio_version }}"
+  become: true
+
+- name: "Install cri-o"
+  package:
+    name: "cri-o"
+    state: present
+  become: true
+
+- name: "Start crio"
+  systemd:
+    state: restarted
+    name: crio
+    enabled: yes
+    daemon_reload: yes
+  become: true
+
+- name: "Create /etc/crio/crio.conf.d/ folder"
+  ansible.builtin.file:
+    path: "/etc/crio/crio.conf.d/"
+    state: directory
+  become: true
+
+- name: "Copy 02-cgroup-manager.conf file"
+  ansible.builtin.copy:
+    src: "files/crio.conf.d/02-cgroup-manager.conf"
+    dest: "/etc/crio/crio.conf.d/02-cgroup-manager.conf"
+  become: true
+
+- name: "Restart cri-o"
+  systemd:
+    state: restarted
+    name: crio
+  become: true
+
+- name: "Activate changes"
+  shell: "sysctl --system"
+  become: true
+...

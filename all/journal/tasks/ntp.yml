@@ -1,0 +1,20 @@
+---
+# https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/configuring_basic_system_settings/using-chrony-to-configure-ntp
+- name: Install {{ntp_daemon}}
+  package:
+    name: "{{ntp_package}}"
+    state: present
+  become: true
+- name: Configure {{ntp_daemon}} file
+  template:
+    src: "{{ntp_package}}.conf.j2"
+    dest: "/etc/{{ntp_package}}.conf"
+  notify: restart ntp
+  become: true
+- name: start {{ntp_daemon}} daemon
+  service: 
+    name: "{{ntp_daemon}}"
+    state: started 
+    enabled: yes
+  become: true
+...

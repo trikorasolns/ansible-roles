@@ -1,0 +1,7 @@
+---
+# vars file for common
+vpn_packages:
+  - NetworkManager-openvpn
+  - inkscape
+  - digikam
+...

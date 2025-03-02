@@ -1,0 +1,24 @@
+{# https://www.jfrog.com/confluence/display/RTF/Repository+Configuration+JSON #}
+{
+  "key": "{{ repo_name }}",
+  "rclass" : "local",
+  {# "maven" | "gradle" | "ivy" | "sbt" | "helm" | "cocoapods" | "opkg" | "rpm"| "nuget" | "cran" | "gems" | "npm" | "bower" | "debian" | "composer" | "pypi" | "docker" | "vagrant" | "gitlfs" | "go" | "yum" | "conan" | "chef" | "puppet" | "generic" (default) #}
+{% if package_type is defined %}
+  "packageType": "{{ package_type }}"
+{% endif %}
+{% if repo_description is defined %}
+  "description": "{{ repo_description }}",
+{% endif %}
+{% if repo_notes is defined %}
+  "notes": "{{ repo_notes }}",
+{% endif %}
+{% if includes_pattern is defined %}
+  "includesPattern": "{{ includes_pattern }}",
+{% endif %}
+{% if includes_pattern is defined %}
+  "excludesPattern": "{{ includes_pattern }}",
+{% endif %}
+{% if repo_layout_ref is defined %}
+  "repoLayoutRef" : "{{ repo_layout_ref }}",
+{% endif %}
+}

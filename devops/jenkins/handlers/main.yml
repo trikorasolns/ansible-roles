@@ -1,0 +1,15 @@
+---
+# handlers file for common
+- name: Restart firewalld
+  service: name=firewalld state=restarted
+  become: true
+- name: Reload firewalld
+  command: firewall-cmd --reload
+  become: true
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: true
+- name: Restart Jenkins
+  service: name=jenkins state=restarted
+  become: true
+...

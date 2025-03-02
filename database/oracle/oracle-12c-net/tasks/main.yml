@@ -1,0 +1,62 @@
+---
+# Configure Oracle Net
+- include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      skip: true
+- name: Delete ora-listener firewalld service
+  command: "firewall-cmd --permanent --delete-service=ora-listener"
+  become: true
+  ignore_errors: yes
+- name: Create ora-listener firewalld service
+  command: "firewall-cmd --permanent --new-service=ora-listener"
+  become: true
+- name: Create ora-listener firewalld service
+  shell: "{{item}}"
+  become: true
+  with_items:
+    - "firewall-cmd --permanent --service=ora-listener --set-description='Oracle Listener'"
+    - "firewall-cmd --permanent --service=ora-listener --set-short=oracle-listener"
+    - "firewall-cmd --permanent --service=ora-listener --add-port=1521/tcp"
+#    - "firewall-cmd --permanent --service=ora-listener --add-protocol=tcp"
+- name: firewalld - Open Oracle listener ports
+  firewalld:
+    service: ora-listener
+    permanent: yes
+    state: enabled
+  notify: Restart firewalld
+  become: true
+- name: Template netca response file
+  template:
+    src: ../templates/netca.rsp.j2
+    dest: "{{reponse_file_folder}}/netca.rsp"
+    owner: oracle
+    group: oinstall
+    mode: '0660'
+  become: true
+- name: Run installer
+  shell: "./bin/netca -silent -responseFile {{reponse_file_folder}}/netca.rsp"
+  become: true
+  become_user: oracle
+  args:
+    chdir: "{{oracle_home}}"
+  register: runNetca
+- name: Debug runNetca
+  debug:
+    msg: "{{runNetca}}"
+- name: Check status
+  shell: "lsnrctl status"
+  become: true
+  become_user: oracle
+  register: lsnrctl_status
+- name: Debug lsnrctl status
+  debug:
+    msg: "{{lsnrctl_status}}"
+#[oracle@ora12 db_1]$ cd /ora01/app/oracle/product/12.1.0/db_1/ && bin/dbstart
+#ORACLE_HOME_LISTNER is not SET, unable to auto-start Oracle Net Listener
+#Usage: bin/dbstart ORACLE_HOME
+#Processing Database instance "ORA12C": log file /ora01/app/oracle/product/12.1.0/db_1/startup.log
+...

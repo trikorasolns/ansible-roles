@@ -1,0 +1,19 @@
+---
+# handlers file for common
+- name: restart ntp
+  service:
+    name: "{{ ntp_daemon }}"
+    state: restarted
+  when: ntp_enabled
+  become: true
+- name: restart journald
+  service:
+    name: systemd-journald
+    state: restarted
+  become: true
+- name: restart firewalld
+  service:
+    name: firewalld
+    state: restarted
+  become: true
+...

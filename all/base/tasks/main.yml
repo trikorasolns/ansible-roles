@@ -1,0 +1,22 @@
+---
+# tasks file for common
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: install base libraries
+  package: 
+    name: "{{base_dependencies}}"
+    state: present
+  become: true
+- name: set timezone to Europe/Madrid
+  timezone:
+    name: Europe/Madrid
+  become: true
+- name: Create journal log folder
+  file:
+    path: /var/log/journal
+    state: directory
+  become: true
+...

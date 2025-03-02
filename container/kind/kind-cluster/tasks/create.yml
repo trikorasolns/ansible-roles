@@ -1,0 +1,56 @@
+---
+- name: "Template cluster configuration file"
+  ansible.builtin.template:
+    src: "kind-config.yaml.j2"
+    dest: /tmp/kind-config.yaml
+  become: true
+
+- name: "Create cluster"
+  ansible.builtin.shell: "kind create cluster --name {{ cluster_name }} --config /tmp/kind-config.yaml"
+  become: true
+  register: kind_create_cluster_res
+
+- name: "Print Kind Creation"
+  ansible.builtin.debug:
+    msg: "kind_create_cluster_res: {{ kind_create_cluster_res }}"
+
+- name: "Get kubeconfig"
+  ansible.builtin.shell: "kind get kubeconfig --name {{ cluster_name }}"
+  become: true
+  register: kind_kubeconfig_res
+
+- name: "Print kubeconfig"
+  ansible.builtin.debug:
+    msg: "kind_kubeconfig_res: {{ kind_kubeconfig_res }}"
+
+- name: "Set kubeconfig"
+  ansible.builtin.set_fact:
+    kube_config: "{{ kind_kubeconfig_res.stdout }}"
+
+- name: "Find user home folder"
+  connection: local
+  local_action: "shell echo {{ lookup('env','HOME') }}"
+  register: local_user_home
+
+- name: "Create .kube directory"
+  ansible.builtin.file:
+    path: ".kube"
+    state: directory
+
+- name: "Create kubeconfig file"
+  ansible.builtin.copy:
+    content: "{{ kube_config }}"
+    dest: ".kube/config"
+
+- name: "Install Ingress"
+  ansible.builtin.shell: "kubectl apply -f https://kind.sigs.k8s.io/examples/ingress/deploy-ingress-nginx.yaml"
+  # become: true
+
+- name: "Wait until is ready to process requests running"
+  ansible.builtin.shell: |
+    kubectl wait --namespace ingress-nginx \
+      --for=condition=ready pod \
+      --selector=app.kubernetes.io/component=controller \
+      --timeout=90s
+
+...

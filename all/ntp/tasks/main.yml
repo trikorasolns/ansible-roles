@@ -1,0 +1,36 @@
+---
+# tasks file for common
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install {{ntp_daemon}}
+  package:
+    name: "{{ntp_package}}"
+    state: present
+  become: true
+
+- name: "Configure {{ ntp_daemon }} file"
+  template:
+    src: "{{ ntp_package }}.conf.j2"
+    dest: "/etc/{{ ntp_package }}.conf"
+  notify: restart ntp
+  when: "ntp_daemon =='ntp'"
+  become: true
+
+- name: "Configure {{ ntp_daemon }} file"
+  template:
+    src: "{{ ntp_package }}.conf.j2"
+    dest: "/etc/{{ ntp_package }}.conf"
+  notify: restart chronyd
+  when: "ntp_daemon =='chronyd'"
+  become: true
+
+- name: start {{ ntp_daemon }} daemon
+  service:
+    name: "{{ntp_daemon}}"
+    state: started
+    enabled: yes
+  become: true
+...

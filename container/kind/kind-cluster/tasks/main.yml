@@ -1,0 +1,14 @@
+---
+- name: "Validate state"
+  assert:
+    that:
+      - "state == 'present' or state == 'absent'"
+    fail_msg: "'state' must be defined and one of present or absent"
+    success_msg: "'state' is {{ state }}"
+
+- include_tasks: create.yml
+  when: state == 'present'
+
+- include_tasks: delete.yml
+  when: state == 'absent'
+...

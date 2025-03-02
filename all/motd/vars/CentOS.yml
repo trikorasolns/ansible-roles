@@ -1,0 +1,23 @@
+---
+commandline_packages:
+  - bash-completion
+#  - bash-completion-extras
+  - man-db
+  - man-pages
+  - mlocate
+
+ntp_daemon: ntpd
+ntp_package: ntp
+
+rhbase_systemd_services:
+  - systemd-journald
+  - systemd-tmpfiles-setup-dev
+  - systemd-tmpfiles-setup
+
+base_dependencies:
+  - firewalld
+  - pciutils
+
+rhbase_package_manager: yum
+rhbase_package_manager_configuration: /etc/yum.conf
+...

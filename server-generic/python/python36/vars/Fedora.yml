@@ -1,0 +1,6 @@
+---
+#required_repos:
+python_packages:
+    - python36
+#    - rh-python36
+...

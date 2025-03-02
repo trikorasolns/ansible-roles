@@ -1,0 +1,23 @@
+---
+# tasks file for common
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install auto power-off
+  copy:
+    src: cron.d/daily-shutdown
+    dest: /etc/cron.d/daily-shutdown
+    mode: 0644
+  become: true
+  notify: Restart crond
+  when: auto_shutdown is not defined or (auto_shutdown is defined and auto_shutdown == True)
+- name: Remove auto power-off cron if required
+  file:
+    path: /etc/cron.d/daily-shutdown
+    state: absent
+  become: true
+  notify: Restart crond
+  when: auto_shutdown is defined and auto_shutdown == False
+...

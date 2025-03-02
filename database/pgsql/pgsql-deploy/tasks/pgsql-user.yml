@@ -1,0 +1,26 @@
+---
+- name: Create pgSql user
+  postgresql_user:
+    name: "{{pgsql_db_user}}"
+    password: "{{pgsql_db_pw}}"
+#    db: "{{pgsql_db_name}}"
+    encrypted: yes
+    # Example privileges string format
+    # INSERT,UPDATE/table:SELECT/anothertable:ALL
+    role_attr_flags: "{{pgsql_role_attr_flags}}"
+    expires: infinity
+    state: present
+  become: true
+  become_user: "{{postgres_user}}"
+  notify: Restart PostgreSQL
+- name: Add pgSql to database
+  postgresql_user:
+    name: "{{pgsql_db_user}}"
+    db: "{{pgsql_db_name}}"
+    priv: "{{pgsql_user_priv}}"
+    state: present
+  become: true
+  become_user: "{{postgres_user}}"
+  notify: Restart PostgreSQL
+  when: pgsql_db_name is defined
+...

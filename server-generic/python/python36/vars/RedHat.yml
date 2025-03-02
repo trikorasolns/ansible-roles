@@ -1,0 +1,10 @@
+---
+required_repos:
+    - epel-release
+    - centos-release-scl
+#required_packages:
+#    -
+python_packages:
+    - python36
+#    - rh-python36
+...

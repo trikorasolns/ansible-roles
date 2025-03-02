@@ -1,0 +1,20 @@
+---
+free_ipa_packages:
+  - "@idm:DL1"
+  - freeipa-server
+  - ipa-server-dns
+  - bind-dyndb-ldap
+
+free_ipa_firewall_services:
+  - http
+  - https
+  - ldap  # 389
+  - ldaps # 636
+
+free_ipa_firewall_ports:
+  - 88/tcp  # kerberos
+  - 464/tcp # kerberos
+  - 88/udp  # kerberos
+  - 464/udp # kerberos
+  - 123/udp # ntp
+...

@@ -1,0 +1,21 @@
+---
+epel_repo:
+  - epel-release
+required_packages:
+  - yum-utils
+  - device-mapper-persistent-data
+  - lvm2
+  - python-pip
+  - skopeo
+  - dnsmasq
+podman_packages:
+  - podman
+dev_packages:
+  - git # to load source code projects
+
+dnsname_packages:
+  - git
+  - go
+  - containernetworking-plugins
+  - ndjbdns
+...

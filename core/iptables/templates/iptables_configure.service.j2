@@ -1,0 +1,9 @@
+[Unit]
+After=network.target network-online.target
+
+[Service]
+ExecStart={{script_bin_folder}}/fclo01.sh
+ExecStop={{script_bin_folder}}/fope01.sh
+
+[Install]
+WantedBy=default.target

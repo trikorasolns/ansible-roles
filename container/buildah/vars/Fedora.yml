@@ -1,0 +1,12 @@
+---
+required_packages:
+#    - yum-utils
+    - dnf-utils
+    - device-mapper-persistent-data
+    - lvm2
+    - python-pip
+buildah_packages:
+  - buildah
+dev_packages:
+  - git # to load source code projects
+...

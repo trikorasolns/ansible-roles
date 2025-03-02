@@ -1,0 +1,50 @@
+---
+# tasks file for podman
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: Install Epel repository
+  package:
+    name: "{{epel_repo}}"
+    state: present
+  when: epel_repo is defined
+  become: true
+
+- name: Add the libcontainers repository from the Kubic project
+  get_url:
+    url: "https://download.opensuse.org/repositories/devel:kubic:libcontainers:stable/CentOS_7/devel:kubic:libcontainers:stable.repo"
+    dest: "/etc/yum.repos.d/devel:kubic:libcontainers:stable.repo"
+    mode: '0644'
+  become: true
+  when: "'Fedora' != ansible_distribution"
+
+- name: Update slirp4netns
+  get_url:
+    url: "https://github.com/rootless-containers/slirp4netns/releases/download/v1.0.0/slirp4netns-x86_64"
+    dest: "/usr/bin/slirp4netns"
+    mode: '0755'
+  become: true
+  when: "'Fedora' != ansible_distribution"
+
+- name: Install required packages
+  package:
+    name: "{{required_packages}}"
+    state: present
+  become: true
+
+- name: Install Podman packages
+  package:
+    name: "{{podman_packages}}"
+    state: present
+  become: true
+
+- name: Install Cockpit Podman packages
+  package:
+    name: "{{ cockpit_packages }}"
+    state: present
+  become: true
+
+...

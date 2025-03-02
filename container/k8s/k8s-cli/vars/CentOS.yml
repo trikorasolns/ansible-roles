@@ -1,0 +1,31 @@
+# optional_packages:
+#   - cockpit-kubernetes
+#   - kubernetes-ansible
+
+# containerd
+containerd_packages:
+  - containerd.io
+
+# cri-o
+
+# docker
+
+docker_dependencies:
+  - yum-utils
+  - device-mapper-persistent-data
+  - lvm2  
+
+docker_packages: 
+  - containerd.io-1.2.13
+  - docker-ce-19.03.11
+  - docker-ce-cli-19.03.11
+
+docker_old_packages: 
+  - docker
+  - docker-client
+  - docker-client-latest
+  - docker-common
+  - docker-latest
+  - docker-latest-logrotate
+  - docker-logrotate
+  - docker-engine

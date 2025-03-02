@@ -1,0 +1,10 @@
+---
+virtualization_packages:
+  - "@virtualization"
+  - libvirt
+  - virt-install
+  - bridge-utils
+
+virtualization_cockpit_packages:
+  - cockpit-machines
+...

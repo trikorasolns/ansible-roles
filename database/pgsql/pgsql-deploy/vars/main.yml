@@ -1,0 +1,6 @@
+---
+# vars file for PostgreSQL
+pgsql_service_name: postgres
+firewall_services:
+  - postgresql
+...

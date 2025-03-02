@@ -1,0 +1,11 @@
+---
+# vars file for common
+dhcp_ports:
+# UDP 	DHCP Smart Proxies
+  - 67/udp
+  - 68/udp
+  # proxyDHCP
+  - 4011/udp
+firewall_services:
+  - dhcp
+...

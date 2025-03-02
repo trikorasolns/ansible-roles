@@ -1,0 +1,25 @@
+---
+# handlers file for ibm-maximo-init
+- name: start MySQL service
+  become: true
+  service: 
+    name: mysqld 
+    state: started
+    enabled: true
+- name: Restart mysql
+  become: true
+  service: 
+    name: mysqld 
+    state: restarted
+- name: enable MySQL service
+  become: true
+  service: 
+    name: mysqld 
+    enabled: true
+- name: Restart firewalld
+  service: name=firewalld state=restarted
+  become: true
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: true
+...

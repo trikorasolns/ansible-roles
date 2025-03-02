@@ -1,0 +1,13 @@
+---
+- name: "Print operation"
+  debug:
+    msg: "remove? : {{ remove }}"
+
+- name: "Install"
+  include_tasks: install.yml
+  when: not remove | bool
+
+- name: "Remove"
+  include_tasks: remove.yml
+  when: remove | bool
+...

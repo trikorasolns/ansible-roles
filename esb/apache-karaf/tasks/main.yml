@@ -1,0 +1,85 @@
+---
+- name: Install openjdk 11
+  package:
+    name: java-11-openjdk
+    state: present
+  become: true
+- name: Create the karaf user
+  user:
+    name: "{{ apache_karaf_user }}"
+    comment: "{{ apache_karaf_user }}"
+  become: true
+- name: Configure karaf user bash
+  command: dirname $(dirname $(readlink -f $(which java)))
+  register: java_home
+#- name: Adding the path in the bashrc files
+#   lineinfile: dest=/home/{{apache_karaf_user}}/.bash_profile line='export PATH=$PATH:path-to-mysql/bin' insertafter='EOF' regexp='export PATH=\$PATH:path-to-mysql/bin' state=present backup=yes
+- name: Remove Apache Karaf
+  file:
+    path: "{{ apache_karaf_folder }}/apache-karaf-{{apache_karaf_version}}"
+    state: absent
+  #become: true
+  when: apache_karaf_remove == true
+- name: Change {{ apache_karaf_folder }} folder permission
+  file:
+    path: "{{ apache_karaf_folder }}"
+    state: directory
+    owner: "{{ apache_karaf_user }}"
+    group: "{{ apache_karaf_user }}"
+    mode: 0755
+  #become: true
+#  become_user: root
+#- name: Download Apache Karaf
+#  get_url: 
+#    url: http://archive.apache.org/dist/karaf/karaf-6/6.0.1/apache-karaf-6.0.1.zip
+#    dest: /tmp/apache-karaf-6.0.1.zip
+#    mode: 0666
+# Download Aoacge Jaraf
+# https://karaf.apache.org/archives.html
+# http://www.apache.org/dyn/closer.lua/karaf/4.2.6/apache-karaf-4.2.6.tar.gz
+- name: Download and unzip Apache Karaf
+  unarchive:
+    src: "http://archive.apache.org/dist/karaf/karaf-/{{apache_karaf_version}}/apache-karaf-{{apache_karaf_version}}.tar.gz"
+    dest: "{{ apache_karaf_folder }}/"
+    remote_src: yes
+  #become: true
+  #become_user: "{{ apache_karaf_user }}"
+- name: Change {{ apache_karaf_folder }} folder permission recursive
+  file:
+    path: "{{ apache_karaf_folder }}/apache-karaf-{{apache_karaf_version}}"
+    state: directory
+    owner: "{{ apache_karaf_user }}"
+    group: "{{ apache_karaf_user }}"
+    recurse: yes
+- name: Change {{ apache_karaf_folder }} folder permission recursive
+  file:
+    path: "{{ apache_karaf_folder }}/apache-karaf-{{apache_karaf_version}}"
+    state: directory
+    mode: 0755
+- name: Apache Karaf setenv
+  template:
+    src: setenv.j2
+    dest: "{{ apache_karaf_folder }}/apache-karaf-{{apache_karaf_version}}/bin/setenv"
+  notify: restart apache tomcat
+- name: Open Apache Karaf SSH firewall ports
+#  - firewalld:
+#    port: 8101/tcp
+#    permanent: true
+#    state: enabled
+#    immediate: yes
+  command: firewall-cmd --add-port=8101/tcp --permanent
+  become: true
+  notify: Restart firewalld
+- name: Open Apache Karaf Web Console firewall ports
+#  - firewalld:
+#    port: 8101/tcp
+#    permanent: true
+#    state: enabled
+#    immediate: yes
+  command: firewall-cmd --add-port=8181/tcp --permanent
+  become: true
+  notify: Restart firewalld
+- name: Start Apache Karaf  
+  command: "{{ apache_karaf_folder }}/apache-karaf-{{apache_karaf_version}}/bin/start"
+  become: "{{ apache_karaf_user }}"
+...

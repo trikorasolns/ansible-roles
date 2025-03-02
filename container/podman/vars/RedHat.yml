@@ -1,0 +1,27 @@
+---
+docker_remove_packages:
+    - docker
+    - docker-client
+    - docker-client-latest
+    - docker-common
+    - docker-latest
+    - docker-latest-logrotate
+    - docker-logrotate
+    - docker-engine
+epel_repo:
+  - epel-release
+required_packages:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+    - python-pip
+pip_packages:
+    - docker
+    - docker-compose
+docker_packages:
+    - docker-ce
+    - docker-ce-cli
+    - containerd.io
+cockpit_packages:
+    - cockpit-docker
+...

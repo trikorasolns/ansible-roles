@@ -1,0 +1,26 @@
+[Unit]
+Description=The Oracle Database Service
+After=network.target
+
+[Service]
+Type=forking
+RemainAfterExit=yes
+KillMode=none
+TimeoutStopSec=10min
+# memlock limit is needed for SGA to use HugePages
+LimitMEMLOCK=infinity
+LimitNOFILE=65535
+
+User=oracle
+Group=oinstall
+# Please use absolute path here
+# ExecStart=$ORACLE_HOME/bin/dbstart $ORACLE_HOME &
+# First argument of dbstart is used to bring up Listener
+ExecStart={{oracle_home}}/bin/dbstart {{oracle_home}} &
+ExecStop={{oracle_home}}/bin/dbshut {{oracle_home}}
+Restart=no
+
+[Install]
+# Puts wants directive for the other units in the relationship
+
+WantedBy=default.target

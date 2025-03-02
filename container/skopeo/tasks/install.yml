@@ -1,0 +1,8 @@
+---
+# tasks file for skopeo install
+- name: "Install skopeo packages"
+  package:
+    name: "{{ required_packages }}"
+    state: present
+  become: true
+...

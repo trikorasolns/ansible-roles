@@ -1,0 +1,90 @@
+---
+# vars file for main
+required_packages:
+  - binutils
+  - compat-libcap1
+  - compat-libstdc++-33
+  - compat-libstdc++-33.i686
+  - gcc
+  - gcc-c++
+  - glibc
+  - glibc.i686
+  - glibc-devel
+  - glibc-devel.i686
+  - ksh
+  - libgcc
+  - libgcc.i686
+  - libstdc++
+  - libstdc++.i686
+  - libstdc++-devel
+  - libstdc++-devel.i686
+  - libaio
+  - libaio.i686
+  - libaio-devel
+  - libaio-devel.i686
+  - libXext
+  - libXext.i686
+  - libXtst
+  - libXtst.i686
+  - libX11
+  - libX11.i686
+  - libXau
+  - libXau.i686
+  - libxcb
+  - libxcb.i686
+  - libXi
+  - libXi.i686
+  - make
+  - sysstat
+  - unixODBC
+  - unixODBC-devel
+limits_conf_settings:
+  - domain: oracle
+    limit_type: hard
+    limit_item: nofile
+    value: '65536'
+  - domain: oracle
+    limit_type: soft
+    limit_item: nofile
+    value: '1024'
+  - domain: oracle
+    limit_type: hard
+    limit_item: nproc
+    value: '16384'
+  - domain: oracle
+    limit_type: soft
+    limit_item: nproc
+    value: '16384'
+  - domain: oracle
+    limit_type: hard
+    limit_item: stack
+    value: '32768'
+  - domain: oracle
+    limit_type: soft
+    limit_item: stack
+    value: '10240'
+oracle_groups:
+  - gid: 54321
+    name: oinstall
+  - gid: 54322
+    name: dba
+  - gid: 54323
+    name: oper
+  - gid: 54324
+    name: backupdba
+  - gid: 54325
+    name: dgdba
+  - gid: 54326
+    name: kmdba
+  - gid: 54327
+    name: asmdba
+  - gid: 54328
+    name: asmoper
+  - gid: 54329
+    name: asmadmin
+oracle_base: /ora01/app/oracle
+oracle_home: /ora01/app/oracle/product/12.1.0/db_1
+oracle_password: $6$C/DLd5cplzvNtxQG$VS6..Et0dmP15v.FQvCN0FRbgo5zkL4FLHcYRtDrQg5sTJssTfkG70264JB7hjWem3slrpLQ9rFHxjLoQiTgF0
+sw_root_folder: /opt/_sw
+reponse_file_folder: /tmp
+...

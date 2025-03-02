@@ -1,0 +1,42 @@
+---
+- name: Load vars
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_architecture}}.yml"
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: "Install selinux libraries"
+  package:
+    name: "{{ selinux_dependencies }}"
+    state: present
+  become: true
+  register: sel_install_dep
+
+- name: "install python bindings for SELinux"
+  package:
+    name: "{{ selinux_python_bindings }}"
+    state: present
+  become: true
+  register: sel_install_py
+
+- name: Enable SELinux
+  selinux:
+    policy: targeted
+    state: enforcing
+  become: true
+  register: sel_enable
+- name: Reboot server
+  reboot:
+  become: true
+  when: sel_install_dep.changed == True or sel_install_py.changed == True or sel_enable.changed == True
+- name: test to see if SELinux is running
+  shell: getenforce
+  register: sestatus
+  changed_when: false
+  become: true
+- name: GetEnforce
+  debug:
+    msg: "{{sestatus}}"
+...

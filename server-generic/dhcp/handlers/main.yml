@@ -1,0 +1,12 @@
+---
+# handlers file for common
+- name: Restart firewalld
+  service: name=firewalld state=restarted
+  become: true
+#- name: Reload systemctl
+#  command: systemctl daemon-reload
+#  become: true
+- name: Restart dhcpd
+  service: name=dhcpd state=restarted
+#  become: true
+...

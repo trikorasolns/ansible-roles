@@ -1,0 +1,12 @@
+---
+- name: Change pg_hba file
+  lineinfile:
+    path: /var/lib/pgsql/data/pg_hba.conf
+    regexp: "^{{pgsql_ident_map_name}} {{pgsql_ident_os_user}} {{pgsql_ident_db_user}}"
+    line: "{{pgsql_ident_map_name}} {{pgsql_ident_os_user}} {{pgsql_ident_db_user}}"
+    backup: true
+  notify:
+    - Restart PostgreSQL service
+  become: true
+  when: pgsql_ident_map_name is defined and pgsql_ident_os_user is defined and pgsql_ident_db_user is defined
+...

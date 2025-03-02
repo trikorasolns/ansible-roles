@@ -1,0 +1,8 @@
+---
+# tasks file for skopeo uninstall
+- name: "Uninstall skopeo packages"
+  package:
+    name: "{{ required_packages }}"
+    state: absent
+  become: true
+...

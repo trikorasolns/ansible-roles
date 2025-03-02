@@ -1,0 +1,32 @@
+---
+- name: "Create local config folder"
+  local_action:
+    module: file
+    path: "{{ dest_k8s_config_folder }}"
+    state: "directory"
+  when: "dest_k8s_config_folder is defined"
+
+- name: "Fetch k8s config to {{ dest_k8s_config_folder }}/config-{{ inventory_hostname }}"
+  fetch:
+    src: "{{ k8s_config_file }}"
+    dest: "{{ dest_k8s_config_folder }}/config-{{ inventory_hostname }}"
+    flat: yes
+  become: true
+  when: "dest_k8s_config_folder is defined"
+
+- name: "k8s config file location on remote host"
+  debug:
+    msg: "{{ k8s_config_file }}"
+  when: "dest_k8s_config_folder is not defined"
+
+# - name: Fetch k8s bineries
+#   fetch:
+#     src: "{{ k8s_bin_folder }}/{{ item }}"
+#     dest: "{{ ansible_env.HOME }}/.local/bin"
+#   with_items: k8s_bin_files
+
+- name: "k8s bin file location on remote host"
+  debug:
+    msg: "{{ k8s_bin_folder }}"
+  when: "dest_k8s_bin_folder is not defined"
+...

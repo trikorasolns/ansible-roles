@@ -1,0 +1,32 @@
+---
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- include: mysql-remove.yml
+  when: mysql_remove is defined and mysql_remove
+- name: Check if MySQL service exists
+  stat:
+    path: "/etc/systemd/system/multi-user.target.wants/mysqld.service"
+  register: mysql_service_status
+  become: true
+- name: Print mysql_reinstall == True
+  debug:
+    msg: 'TRUE mysql_reinstall: {{ mysql_reinstall }}'
+  when: mysql_reinstall is defined
+- name: Get MySQL information with non-default credentials
+  mysql_info:
+    login_user: "root"
+    login_password: "{{mysql_root_password}}"
+    filter: version
+  register: mysql_info
+  ignore_errors: yes
+- name: Debug MySQL installation
+  debug:
+    msg: "{{ mysql_info }}"
+- include: mysql.yml
+  when: not mysql_service_status.stat.exists or (mysql_reinstall is defined and mysql_reinstall) or mysql_info.failed
+...
+# sudo
+#

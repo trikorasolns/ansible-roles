@@ -1,0 +1,16 @@
+---
+- name: Install command line packages (autocomplete, mandb, locate)
+  package:
+    name: "{{commandline_packages}}"
+    state: present
+  become: true
+- name: Update locate database
+  shell: "updatedb"
+  become: true
+- name: Update man database
+  shell: "mandb"
+  become: true
+- name: Source autocomplete
+  shell: "source /etc/profile.d/bash_completion.sh"
+  become: true
+...

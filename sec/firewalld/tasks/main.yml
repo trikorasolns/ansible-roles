@@ -1,0 +1,75 @@
+---
+# tasks file for common
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version }}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: firewalld - Manage firewall services
+  firewalld:
+    service: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{ firewall_services }}"
+  become: true
+  notify: Restart firewalld
+  when: firewall_services is defined and (firewalld_enabled is undefined or firewalld_enabled == True)
+
+- name: firewalld - Manage firewall ports
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{ firewall_ports }}"
+  become: true
+  notify: Restart firewalld
+  when: firewall_ports is defined and (firewalld_enabled is undefined or firewalld_enabled == True)
+
+- name: "Add masquerade to trusted zone"
+  firewalld:
+    masquerade: "{{ masquerade }}"
+    zone: "{{ masquerade_zone | default('trusted') }}"
+    permanent: yes
+    state: enabled
+  notify: Restart firewalld
+  become: true
+  when: masquerade is defined and firewall_ports is defined and (firewalld_enabled is undefined or firewalld_enabled == True)
+
+- name: "Add source network to trusted sources"
+  firewalld:
+    source: "{{ item }}"
+    zone: "trusted"
+    permanent: yes
+    state: enabled
+  loop: "{{ trusted_sources | default([]) }}"
+    # - "{{ pod_subnet }}"
+    # - "{{ service_subnet }}"
+  notify: Restart firewalld
+  become: true
+  when: trusted_sources is defined and (firewalld_enabled is undefined or firewalld_enabled == True)
+
+- name: "Open k8s known ports"
+  firewalld:
+    port: "{{ item }}"
+    zone: "public"
+    permanent: yes
+    state: enabled
+  loop: "{{ firewall_ports }}"
+  notify: Restart firewalld
+  become: true
+  when: firewall_ports is defined and (firewalld_enabled is undefined or firewalld_enabled == True)
+
+- name: "Open k8s known services"
+  firewalld:
+    service: "{{ item }}"
+    zone: "public"
+    permanent: yes
+    state: enabled
+  loop: "{{ firewall_services }}"
+  notify: Restart firewalld
+  become: true
+  when: firewall_services is defined and (firewalld_enabled is undefined or firewalld_enabled == True)
+...

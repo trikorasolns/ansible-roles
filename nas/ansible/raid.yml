@@ -1,0 +1,8 @@
+---
+# file: nfs.yml
+- name: RAID
+  hosts: raid
+  gather_facts: yes
+  roles: 
+    - raid
+...

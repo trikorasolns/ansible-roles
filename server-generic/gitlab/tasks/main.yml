@@ -1,0 +1,32 @@
+---
+# tasks file for gitlab
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install required dependencies
+  package: 
+    name: "{{required_dependencies}}" 
+    state: present
+  become: true
+- name: Add the GitLab package repository
+  shell: curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash
+  become: true
+- name: Install GitLab
+  package: name="gitlab-ee" state=present
+  become: true
+  environment:
+    EXTERNAL_URL: "{{ansible_fqdn}}"
+# ansible_hostname
+- name: firewalld - Open http ports
+  firewalld:
+    service: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{firewall_services}}"
+  become: true
+  notify: Restart firewalld
+...
+# https://about.gitlab.com/install/#centos-7

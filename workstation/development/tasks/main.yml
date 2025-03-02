@@ -1,0 +1,7 @@
+---
+- name: Install development libraries
+  package:
+    name: "{{ image_packages }}"
+    state: present
+  become: true
+...

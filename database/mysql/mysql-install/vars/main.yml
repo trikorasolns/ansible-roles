@@ -1,0 +1,5 @@
+---
+# vars file for main
+firewall_ports:
+  - 3306/tcp
+...

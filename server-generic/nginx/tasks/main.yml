@@ -1,0 +1,50 @@
+---
+# tasks file for cockpit
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install required packages
+  package:
+    name: "{{required_packages}}"
+    state: present
+  become: true
+  when: required_packages is defined
+- name: Template nginx repository
+  copy:
+    src: "nginx-{{ansible_distribution|lower}}-{{ansible_distribution_major_version}}.repo"
+    dest: "/etc/yum.repos.d/nginx.repo"
+    owner: root
+    group: root
+    mode: '0644'
+  become: true
+- name: Install Nginx packages
+  package:
+    name: "{{nginx_packages}}"
+    state: present
+  become: true
+- name: Execute firewall role
+  include_role:
+    name: 'core/firewall'
+#  vars:
+#    firewall_services: "{{firewall_services}}"
+#  loop:
+#    - '{{ firewall_services }}'
+#  loop_control:
+#    loop_var: role_services
+- name: Enable nginx service
+  systemd:
+    name: nginx
+#    state: started
+    enabled: yes
+  become: true
+- name: Start Nginx
+  service:
+    name: nginx
+    state: started
+  become: true
+# SSL
+# yum install openssl  mod_ssl
+# firewall-cmd --add-service https --permanent
+...

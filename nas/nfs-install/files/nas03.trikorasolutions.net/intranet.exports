@@ -1,0 +1,23 @@
+/home      192.168.199.101(rw,sync,no_root_squash,no_subtree_check)
+/mnt/data/apps 127.*(rw,sync,no_subtree_check)
+/mnt/data/apps 192.168.199.*(rw,sync,no_subtree_check)
+/mnt/data/apps *(rw,sync,no_subtree_check)
+/mnt/data/apps 10.8.0.*(rw,sync,no_subtree_check)
+
+# docs-trikora
+/mnt/data/docs-trikora 127.*(rw,sync,no_subtree_check)
+/mnt/data/docs-trikora 192.168.199.*(rw,sync,no_subtree_check)
+/mnt/data/docs-trikora *(rw,sync,no_subtree_check)
+/mnt/data/docs-trikora 10.8.0.*(rw,sync,no_subtree_check)
+
+# docs-3rd-party
+/mnt/data/docs-3rd-party 127.*(rw,sync,no_subtree_check,all_squash)
+/mnt/data/docs-3rd-party 192.168.199.*(rw,sync,no_subtree_check,all_squash)
+/mnt/data/docs-3rd-party *(rw,sync,no_subtree_check,all_squash)
+/mnt/data/docs-3rd-party 10.8.0.*(rw,sync,no_subtree_check,all_squash)
+
+# web - intranet
+/mnt/data/web 127.*(rw,sync,no_subtree_check)
+/mnt/data/web 192.168.199.*(rw,sync,no_subtree_check)
+/mnt/data/web *(rw,sync,no_subtree_check)
+/mnt/data/web 10.8.0.*(rw,sync,no_subtree_check)

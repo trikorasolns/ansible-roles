@@ -1,0 +1,7 @@
+---
+# vars file for nfs
+firewall_services:
+  - nfs
+  - mountd
+  - rpc-bind
+...

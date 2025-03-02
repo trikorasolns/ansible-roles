@@ -1,0 +1,23 @@
+---
+cockpit_packages:
+    - epel-release
+    - cockpit
+    - cockpit-bridge
+    - cockpit-composer
+    - cockpit-dashboard
+    - cockpit-doc
+    - cockpit-packagekit
+    - cockpit-pcp
+    - cockpit-storaged
+#    - cockpit-subscriptions
+    - cockpit-tests
+    - cockpit-system
+    - cockpit-ws
+#    - subscription-manager-cockpit
+cockpit_vm_packages:
+    - cockpit-machines
+    - cockpit-machines-ovirt
+cockpit_container_packages:
+    - cockpit-docker
+    - cockpit-kubernetes
+...

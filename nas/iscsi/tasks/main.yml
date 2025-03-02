@@ -1,0 +1,59 @@
+---
+# tasks file for jenkins
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+#- name: Install nfs utilities, enable and start services:
+# yum install -y nfs-utils
+- name: Install NFS packages
+  yum: 
+    name: "{{nfs_packages}}"
+    state: present
+  become: true
+- name: Force systemd to reload
+  systemd:
+    daemon_reload: yes
+  become: true
+- name: Enable services
+  systemd:
+    state: started
+    enabled: yes
+    name: "{{item}}"
+  with_items:
+    - "{{nfs_services}}"
+  become: true
+# systemctl enable rpcbind && systemctl start rpcbind
+# systemctl enable nfs-server && systemctl start nfs-server
+- name: firewalld - Open http ports
+  firewalld:
+    service: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{firewall_services}}"
+  become: true
+  notify: Restart firewalld
+- name: Set SELinux properties
+  shell: "setsebool -P nfs_export_all_rw=1"
+  become: true
+- name: Copy exports.d files
+  copy:
+    src: "{{item}}"
+    dest: "/etc/exports.d/{{item | basename}}"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+#  with_items:
+#    - {{ansible_hostname}}/kvm.exports
+#    - intranet.exports
+  with_fileglob:
+    - "{{ansible_fqdn}}/*"
+#    - "{{inventory_hostname}}/*"
+  become: true
+- name: Restart NFS service
+  shell: exportfs -rav
+  become: true
+  notify: Restart nfs
+...

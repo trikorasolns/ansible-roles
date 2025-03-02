@@ -1,0 +1,46 @@
+---
+# tasks file for jenkins
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install DHCP packages
+  package: 
+    name: "{{dhcp_packages}}" 
+    state: present
+  become: true
+- name: Template DHCP
+  template:
+    src: ../templates/{{ansible_fqdn}}/dhcpd.conf.j2
+    dest: /etc/dhcp/dhcpd.conf
+    mode: 0644
+  become: true
+  notify: Restart dhcpd
+- name: Enable and start DHCP service
+  systemd:
+    state: started
+    enabled: yes
+    name: dhcpd
+  become: true
+- name: firewalld - Open dhcp service port
+  firewalld:
+    service: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{firewall_services}}"
+  become: true
+  notify: Restart firewalld
+- name: firewalld - Open dhcp ports
+  firewalld:
+    zone: public
+    port: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{dhcp_ports}}"
+  become: true
+  notify: Restart firewalld
+...
+

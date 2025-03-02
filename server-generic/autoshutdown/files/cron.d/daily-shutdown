@@ -1,0 +1,2 @@
+# TKR: Shutdown the system.
+50 1 * * * root systemctl poweroff

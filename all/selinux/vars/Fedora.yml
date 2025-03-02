@@ -1,0 +1,8 @@
+---
+selinux_dependencies:
+  - libselinux-utils
+
+selinux_python_bindings:
+  - python3-libselinux
+  - python3-libsemanage
+...

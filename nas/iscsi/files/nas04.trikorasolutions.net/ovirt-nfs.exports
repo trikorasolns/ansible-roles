@@ -1,0 +1,31 @@
+# KVM folders
+
+# VMS08
+/mnt/data/ovirt-nfs/data vms08(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/data vms08a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/data-import vms08(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/data-import vms08a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/export vms08(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/export vms08a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/iso vms08(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/iso vms08a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+# VMS04
+/mnt/data/ovirt-nfs/data vms04(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/data-import vms04(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/export vms04(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/iso vms04(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+
+# vmsengine
+/mnt/data/ovirt-nfs/data vmsengine(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/export vmsengine(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/ovirt-nfs/iso vmsengine(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/ovirt-nfs/data 192.168.199.140(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/ovirt-nfs/export 192.168.199.140(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/ovirt-nfs/iso 192.168.199.140(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+# (rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+# (rw,sync,no_subtree_check,insecure)
+# (rw,sync,no_subtree_check, ,anonuid=36,anongid=36)
+# (rw,sync,no_subtree_check)

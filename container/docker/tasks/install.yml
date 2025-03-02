@@ -1,0 +1,37 @@
+---
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_os_family }}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: "Call the old docker removal tasks"
+  include_tasks: remove_old_version.yml
+
+- name: "Install dependencies needed by docker"
+  yum:
+    name: "{{ docker_dependencies }}"
+    state: present
+  become: true
+
+- name: "Add docker repository"
+  include_tasks: add-docker-repo.yml
+
+- name: "Install docker"
+  yum:
+    name: "{{ docker_packages }}"
+    state: present
+  become: true
+
+- name: "Ensures /etc/docker dir exists"
+  file: path=/etc/docker state=directory
+  become: true
+
+- name: "Start docker"
+  systemd:
+    state: restarted
+    name: docker
+    enabled: yes
+  become: true
+...

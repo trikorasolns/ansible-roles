@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Intellij IDEA
+GenericName=Intellij IDEA
+Exec=/opt/intellij/bin/idea.sh
+Path=/opt/intellij/bin/
+Icon=/opt/intellij/bin/idea.png
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Development
+
+X-Desktop-File-Install-Version=0.15

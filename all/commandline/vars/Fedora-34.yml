@@ -1,0 +1,10 @@
+# roles/rh-base/vars/Fedora.yml
+---
+commandline_packages:
+  - bash-completion
+  #  - bash-completion-extras
+  - man-db
+  - man-pages
+  - mlocate
+
+...

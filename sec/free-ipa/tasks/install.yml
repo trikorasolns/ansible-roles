@@ -1,0 +1,20 @@
+---
+- name: "Install FreeIpa packages"
+  package: 
+    name: "{{ free_ipa_packages }}"
+    state: present
+  become: true
+
+- name: "Execute firewall role"
+  include_role:
+    name: 'sec/firewalld'
+  vars:
+    firewall_services: "{{ free_ipa_firewall_services }}"
+    firewall_ports: "{{ free_ipa_firewall_ports }}"
+
+# - name: "Install FreeIpa"
+#   shell: "ipa-server-install"
+#   become: true
+#   register: free_ipa_install
+
+...

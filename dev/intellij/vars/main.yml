@@ -1,0 +1,6 @@
+---
+# vars file for common
+#tosdi_url: xxx
+tosdi_folder: /opt/tosdi
+tosdi_tmp_folder: /tmp/tosdi
+...

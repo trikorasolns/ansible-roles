@@ -1,0 +1,8 @@
+---
+required_packages:
+    - ksh
+    - enchant
+    - hunspell
+    - hunspell-es-ES
+    - hunspell-pt
+...

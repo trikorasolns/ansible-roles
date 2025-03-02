@@ -1,0 +1,19 @@
+---
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Apply exports
+  include_tasks: template-export.yml
+  vars:
+    nfs_export_group: "{{ item }}"
+  with_dict: "{{ nfs_exports }}"
+#  loop: "{{ nfs_exports }}"
+#  loop_control:
+#    loop_var: loop_item
+- name: Restart NFS service
+  shell: exportfs -rav
+  become: true
+  notify: Restart nfs
+...

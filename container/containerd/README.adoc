@@ -1,0 +1,71 @@
+= Role: Containerd
+
+:toc: left
+:doctype: article
+:source-highlighter: rouge
+
+Installs containerd on host.
+
+== Description
+
+This role will install containerd on a host.
+
+== Requirements
+
+None.
+
+== Role Variables
+
+[cols="1,1,1,4"]
+|===
+| Name | Type | Value | Description
+
+| state | string | [present,absent] 
+a|
+
+  * `present` will install containerd 
+  * `absent` will remove it
+
+|===
+
+== Example Playbook
+
+.Sample containerd installation playbook
+[source,yaml]
+-----
+---
+- name: "Install containerd"
+  hosts: "a_host"
+  gather_facts: "{{ gathering_host_info | default('true') | bool == true }}"
+
+  tasks:
+    - import_role:
+      name: 'containerd'
+      vars:
+        state: present
+...
+-----
+
+.Sample containerd removal playbook
+[source,yaml]
+-----
+---
+- name: "Remove containerd"
+  hosts: "a_host"
+  gather_facts: "{{ gathering_host_info | default('true') | bool == true }}"
+
+  tasks:
+    - import_role:
+      name: 'containerd'
+      vars:
+        state: absent
+...
+-----
+
+=== License
+
+https://www.apache.org/licenses/LICENSE-2.0[Apache License 2.0]
+
+== Author Information
+
+This role has been created by the https://github.com/orgs/snowdrop/teams[Snowdrop team].

@@ -1,0 +1,22 @@
+---
+# vars file for common
+firewall_ports:
+  - 3000/tcp
+# * Puppet Master
+  - 8140/tcp
+# UDP 	DHCP Smart Proxies
+  - 67/udp
+  - 68/udp
+# UDP 	* TFTP Smart Proxies
+  - 69/udp
+# TCP & UDP 	DNS Smart Proxies
+  - 53/tcp
+  - 53/udp
+#  - 5432 	TCP 	Separate PostgreSQL database
+#  - 3306 	TCP 	Separate MySQL database
+firewall_services:
+  - http
+  - https
+  #- dhcp
+  #- tftp
+...

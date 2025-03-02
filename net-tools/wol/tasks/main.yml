@@ -1,0 +1,14 @@
+---
+# tasks file for common
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install auto power-off
+- name: Send a magic Wake-on-LAN packet to 00:00:5E:00:53:66
+  wakeonlan:
+    mac: '00:00:5E:00:53:66'
+    broadcast: 192.0.2.23
+  delegate_to: localhost
+...

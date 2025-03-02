@@ -1,0 +1,7 @@
+---
+- name: Install OpenVPN cli
+  package:
+    name: "{{ vpn_packages }}"
+    state: present
+  become: true
+...

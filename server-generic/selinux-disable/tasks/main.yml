@@ -1,0 +1,27 @@
+---
+# tasks file for selinux-disable
+# enforcing
+# permissive
+# disabled
+- name: Disable SELinux
+  selinux:
+    state: permissive
+  become: true
+  register: selinux_result
+- name: Reboot immediately if there was a change.
+  shell: "sleep 5 && reboot"
+  async: 1
+  poll: 0
+  when: (selinux_result is changed)
+- name: Wait for server to restart
+  local_action:
+    module: wait_for
+    host: "{{ (ansible_ssh_host|default(ansible_host))|default(inventory_hostname) }}"
+    search_regex: OpenSSH
+    port: "{{ ansible_ssh_port }}"
+    delay: 10
+    sleep: 5
+    timeout: 300
+    state: started
+  when: (selinux_result is changed)
+...

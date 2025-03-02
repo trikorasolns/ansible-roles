@@ -1,0 +1,30 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	2	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+checkUser	./movilgmao/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	285;"	function
+checkUser	./server/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	285;"	function
+checkUser	./workstation/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	285;"	function
+console	./movilgmao/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	399;"	function
+console	./server/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	399;"	function
+console	./workstation/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	399;"	function
+dump	./movilgmao/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	505;"	function
+dump	./server/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	505;"	function
+dump	./workstation/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	505;"	function
+getpid	./movilgmao/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	352;"	function
+getpid	./server/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	352;"	function
+getpid	./workstation/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	352;"	function
+start	./movilgmao/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	412;"	function
+start	./server/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	412;"	function
+start	./workstation/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	412;"	function
+status	./movilgmao/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	493;"	function
+status	./server/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	493;"	function
+status	./workstation/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	493;"	function
+stopit	./movilgmao/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	431;"	function
+stopit	./server/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	431;"	function
+stopit	./workstation/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	431;"	function
+testpid	./movilgmao/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	389;"	function
+testpid	./server/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	389;"	function
+testpid	./workstation/src/main/ansible/roles/apache-servicemix-3-service/templates/KARAF-service.j2	389;"	function

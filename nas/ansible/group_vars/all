@@ -1,0 +1,6 @@
+---
+sonatype_nexus_user: nexus
+sonatype_nexus_service: nexus
+sonatype_nexus_major_version: 3
+sonatype_nexus_minor_version: 14.0-04
+...

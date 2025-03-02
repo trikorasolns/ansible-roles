@@ -1,0 +1,7 @@
+---
+# vars file for common
+required_packages:
+  - unzip
+
+eclipse_url: http://eclipse.mirror.garr.it/mirrors/eclipse//technology/epp/downloads/release/2019-12/R/eclipse-jee-2019-12-R-linux-gtk-x86_64.tar.gz
+...

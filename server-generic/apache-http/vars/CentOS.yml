@@ -1,0 +1,12 @@
+---
+httpd_packages:
+#    - epel-release
+    - httpd
+    - crypto-utils
+# SSL
+    - openssl
+    - mod_ssl
+firewall_services:
+    - http
+    - https # SSL
+...

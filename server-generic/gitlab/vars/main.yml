@@ -1,0 +1,6 @@
+---
+# vars file for common
+firewall_services:
+  - http
+  - https
+...

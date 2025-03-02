@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0
+Name=Talend Open Studio for Data Integration IDE
+GenericName=IDE
+Exec=/opt/tos_di/TOS_DI-linux-gtk-x86.sh
+Path=/opt/tos_di
+Icon=/opt/tos_di/plugins/org.talend.rcp.branding.tos_7.2.1.20190610_1538/icons//appli_32x32.gif
+Terminal=false
+Type=Application
+StartupNotify=true
+Categories=Development
+
+X-Desktop-File-Install-Version=0.15

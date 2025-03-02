@@ -1,0 +1,10 @@
+---
+selinux_dependencies:
+  - libselinux-utils
+  - selinux-policy
+  - selinux-policy-targeted
+
+selinux_python_bindings:
+  - libselinux-python
+  - libsemanage-python
+...

@@ -1,0 +1,74 @@
+---
+# tasks file for jenkins
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install required packages
+  package: name={{item}} state=latest
+  become: true
+  with_items:
+    - "{{required_packages}}"
+- name: firewalld - Open Jenkins ports
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+  become: true
+  notify: Restart firewalld
+- name: Copy profile file
+  copy:
+    src: "/etc/profile"
+    dest: "/etc/profile_backup"
+    remote_src: true
+  become: true
+- name: Append JAVA_HOME to profile
+  lineinfile:
+    path: /etc/profile
+    regexp: '^export JAVA_HOME='
+    line: 'export JAVA_HOME=/usr/lib/jvm/jre-1.8.0-openjdk'
+  become: true
+- name: Append JRE_HOME to profile
+  lineinfile:
+    path: /etc/profile
+    regexp: '^export JRE_HOME='
+    line: 'export JRE_HOME=/usr/lib/jvm/jre' 
+  become: true
+- name: Configure Jenkins Repo
+  shell: wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+  become: true
+- name: Configure Jenkins Repo
+  shell: rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+  become: true
+- name: Install Jenkins packages
+  package: name={{item}} state=latest
+  become: true
+  with_items:
+    - "{{jenkins_packages}}"
+  notify:
+    - Reload systemctl
+- name: Enable Jenkins service
+  systemd:
+    name: jenkins
+    state: started
+    enabled: yes
+  become: true
+- name: firewalld - Open Jenkins ports
+  firewalld:
+    zone: public
+    port: 8080/tcp
+    permanent: yes
+    state: enabled
+  become: true
+  notify: Restart firewalld
+- name: Get Jenkins Initial Admin Password
+  shell: "sudo cat /var/lib/jenkins/secrets/initialAdminPassword"
+  register: jenkins_admin_pw
+- name: URL
+  debug:
+    msg: Login into http://{{ansible_hostname}}:8080/
+- name: Key
+  debug:
+    msg: "{{jenkins_admin_pw}}"
+...

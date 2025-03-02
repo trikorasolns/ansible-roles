@@ -1,0 +1,13 @@
+---
+- name: Config | Install custom `/etc/motd` file
+  template:
+    src: motd.j2
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: 0644
+#  when: rhbase_motd == true
+  tags:
+    - rhbase
+    - config
+...

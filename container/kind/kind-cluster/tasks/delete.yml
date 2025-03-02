@@ -1,0 +1,11 @@
+---
+- name: "Create cluster"
+  ansible.builtin.shell: "kind delete cluster --name {{ cluster_name }}"
+  become: true
+  register: kind_delete_cluster_res
+
+- name: "Print Kind Cluster delete"
+  ansible.builtin.debug:
+    msg: "kind_delete_cluster_res: {{ kind_delete_cluster_res }}"
+
+...

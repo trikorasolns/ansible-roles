@@ -1,0 +1,13 @@
+---
+- name: "Remove CNI"
+  ansible.builtin.file:
+    state: absent
+    path: "/etc/cni/net.d"
+  become: true
+
+- name: "Remove CNI"
+  ansible.builtin.file:
+    state: absent
+    path: "/opt/cni/bin"
+  become: true
+...

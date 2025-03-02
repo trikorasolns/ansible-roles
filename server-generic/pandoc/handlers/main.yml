@@ -1,0 +1,13 @@
+---
+# handlers file for common
+- name: Start Cockpit
+  service:
+    name: "cockpit"
+    state: started
+- name: Restart firewalld
+  service: name=firewalld state=restarted
+  become: true
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: true
+...

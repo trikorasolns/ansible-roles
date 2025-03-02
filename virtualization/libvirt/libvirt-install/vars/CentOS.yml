@@ -1,0 +1,11 @@
+---
+virtualization_packages:
+  - @virtualization
+
+virtualization_cockpit_packages:
+  - cockpit-ovirt-dashboard
+  - cockpit-machines
+  - cockpit-machines-ovirt
+  - cockpit-networkmanager
+  - cockpit-storaged
+...

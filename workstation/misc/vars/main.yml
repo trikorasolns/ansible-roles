@@ -1,0 +1,11 @@
+---
+# vars file for common
+misc_packages:
+  - fuse
+  - keepassxc
+  - libcurl-devel
+  - libxml2-devel
+  - chromium
+  - midori
+...
+#  remmina remmina-gnome-session remmina-plugins-rdp remmina-plugins-vnc remmina-plugins-xdmcp

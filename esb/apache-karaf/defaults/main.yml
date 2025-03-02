@@ -1,0 +1,6 @@
+---
+# defaults file for ibm-maximo-init
+apache_karaf_version: 4.2.6
+apache_karaf_user: karaf
+apache_karaf_remove: false
+apache_karaf_folder: /opt/apache-karaf

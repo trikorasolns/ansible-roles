@@ -1,0 +1,7 @@
+{% for loop_item in nfs_ovirt_exports %}
+
+# {{nfs_ovirt_exports[loop_item].name}}
+{% for share in nfs_ovirt_exports[loop_item].shares %}
+{{share}}
+{% endfor %}
+{% endfor %}

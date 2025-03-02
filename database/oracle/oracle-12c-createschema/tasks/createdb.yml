@@ -1,0 +1,58 @@
+---
+# https://oracle-base.com/articles/12c/oracle-db-12cr1-installation-on-oracle-linux-6
+- include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      skip: true
+- name: Establish createdb variables
+  vars:
+    favcolor: blue
+- name: template db_install.rsp response file
+  template:
+    src: ../templates/dbca.createdb.rsp.j2
+    dest: "{{reponse_file_folder}}/dbca.createdb.rsp"
+    owner: oracle
+    group: oinstall
+    mode: '0660'
+  become: true
+- name: Run dbca
+  shell: "./bin/dbca -silent -responseFile {{reponse_file_folder}}/dbca.createdb.rsp"
+  become: true
+  become_user: oracle
+  args:
+    chdir: "{{oracle_home}}"
+  register: runDbca
+- name: Debug dbca
+  debug:
+    msg: "{{runDbca}}"
+#  Verify connection
+#
+#  [oracle@oel6 ~]$ sqlplus / as sysdba
+#SQL*Plus: Release 12.1.0.2.0 Production on Sat Feb 7 15:49:59 2015
+#  Copyright (c) 1982, 2014, Oracle.  All rights reserved.
+#Connected to:
+#  Oracle Database 12c Enterprise Edition
+#  Release 12.1.0.2.0 - 64bit Production
+#  With the Partitioning, OLAP,
+#  Advanced Analytics and Real Application Testing options
+#  SQL> show parameter db_name
+#  NAME      TYPE    VALUE
+#  --------- ------- -------
+#  db_name   string  ORA12C
+#
+#  SQL> alter session set container=PORA12C1;
+#  Session altered.
+#
+#  SQL> show con_id
+#  CON_ID
+#  ------------------------------
+#  3
+#
+#  SQL> show con_name
+#  CON_NAME
+#  ------------------------------
+#  PORA12C1
+...

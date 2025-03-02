@@ -1,0 +1,15 @@
+---
+httpd_packages:
+    - epel-release
+    - webtatic-release
+    - php55w
+    - php55w-opcache
+    - php55w-xml
+    - php55w-mcrypt
+    - php55w-gd
+    - php55w-devel
+    #    - php55w-mysql
+    #- php55w-pgsql
+    - php55w-intl
+    - php55w-mbstring
+...

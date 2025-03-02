@@ -1,0 +1,19 @@
+---
+- name: Create owner user
+  user:
+    name: "{{owner_user}}"
+    comment: John Doe
+#    uid: "{{owner_user}}"
+    password: "{{default_password}}"
+#    group: "{{owner_user}}"
+    groups: wheel
+    update_password: on_create
+    append: yes
+    state: present
+  become: true
+- name: Install misc libraries
+  package:
+    name: "{{ misc_packages }}"
+    state: present
+  become: true
+...

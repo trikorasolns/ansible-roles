@@ -1,0 +1,14 @@
+---
+# apply nginx template
+- name: Template nginx site file
+  template:
+    src: "{{nginx_conf_template}}"
+    dest: "/etc/nginx/conf.d/{{nginx_conf_template | basename | regex_replace('.j2','')}}"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=
+#  with_fileglob:
+#    - "../templates/nginx/*.j2"
+  become: true
+  notify: Restart nginx
+...

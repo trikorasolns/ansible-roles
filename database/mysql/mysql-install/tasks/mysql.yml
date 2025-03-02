@@ -1,0 +1,115 @@
+---
+#- name: Install packages
+#  package: name=python2-mysql state=present
+#  become: true
+- name: Execute firewall role
+  include_role:
+    name: 'core/firewalld'
+- name: Install MySql requirement libraries
+  package: name={{mysql_requirement_libraries}} state=latest
+  become: true
+- name: Install MySql required libraries
+  package: name={{mysql_required_libraries}} state=latest
+  become: true
+#  with_items:
+#    - "{{mysql_required_libraries}}"
+#- name: Install MySql PIP required libraries
+#  package: name={{item}} state=latest
+#  become: true
+#  with_items:
+#    - "{{pip_mysql_libraries}}"
+- name: Install MySQL remote repo
+  shell: rpm -ivh https://dev.mysql.com/get/mysql57-community-release-el7-11.noarch.rpm
+  become: true
+  register: rpm_repo_result
+  failed_when: "'FAILED' in rpm_repo_result.stderr and 'is already installed' not in rpm_repo_result.stderr"
+  changed_when: rpm_repo_result.changed
+- name: debug rpm_repo_result
+  debug:
+    var: rpm_repo_result
+- name: debug rpm_repo_result.changed
+  debug:
+    var: rpm_repo_result.changed
+- name: Install MySQL Community Edition from MySQL repository
+  package:
+    name: "{{ item }}"
+    disable_gpg_check: yes
+    state: present
+  with_items:
+    - mysql-community-server
+  become: true
+#  notify:
+#    - start MySQL service
+  when: rpm_repo_result.changed == true
+  register: rpm_result
+- name: Reload systemd
+  systemd:
+    daemon_reload: true
+  become: true
+- name: Enable and start MySql service
+  systemd:
+    name: mysqld
+    enabled: true
+    state: started
+  become: true
+- name: Check connection, ignore errors
+  shell: "mysql -uroot -p{{mysql_root_password}} --execute=\"show databases;\""
+  become: true
+  ignore_errors: yes
+  register: mysql_connection_check
+  notify: Restart mysql
+- name: Debug mysql_connection_check
+  debug:
+    msg: "{{mysql_connection_check}}"
+- name: Get temporary mysql password
+  shell: cat /var/log/mysqld.log | grep "A temporary password is generated for" | awk '{print $NF}'
+  register: mysql_generated_pw
+  become: true
+  when: not mysql_connection_check.rc == 0
+- name: Debug mysql_generated_pw
+  debug:
+    msg: "{{mysql_generated_pw}}"
+# TODO: If it frezes here is because the password is no in the log file and the server must ve reinstalled. Pending to do this validation.
+- name: Change mysql root password
+  shell: "mysql -uroot -p{{mysql_generated_pw.stdout}} --execute=\"ALTER USER 'root'@'localhost' IDENTIFIED BY '{{mysql_root_password}}';\" --connect-expired-password"
+  become: true
+  notify: Restart mysql
+  when: not mysql_connection_check.rc == 0
+- name: Configure MySQL
+  template:
+    src: my.cnf.j2
+    dest: /etc/my.cnf
+    owner: root
+    group: root
+    mode: 0644
+    backup: yes
+  become: true
+  when: rpm_result.changed == true
+- name: Configure MySQL root
+  template:
+    src: my.cnf.j2
+    dest: /root/.my.cnf
+    owner: root
+    group: root
+    mode: 0600
+    backup: yes
+  become: true
+  when: rpm_result.changed == true
+#- name: Change root password
+#  mysql_user:
+#    login_user: "root"
+#    login_password: "$mysql_generated_pw"
+#    name: "root"
+#    password: "$mysql_root_password"
+#    host: localhost
+#  become: true
+# TODO: Change password
+# $ grep "temporary password is generated" /var/log/mysqld.log
+# cat /var/log/mysqld.log | grep "A temporary password is generated for" | awk '{print $NF}'
+# A temporary password is generated for root@localhost: <a generated password>
+# $ mysqladmin -u root -p password <NEW_PASSWORD>
+# hT?_ubkqP8Fq
+#  shell: mysqladmin -u root -p $mysql_generated_pw $mysql_root_password
+# mysql -u root -p
+# ALTER USER `root`@`localhost` IDENTIFIED BY 'new_password', `root`@`localhost` PASSWORD EXPIRE NEVER;
+...

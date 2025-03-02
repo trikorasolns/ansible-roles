@@ -1,0 +1,4 @@
+---
+# vars file for common
+intellij_url: https://download.jetbrains.com/idea/ideaIC-2019.2.3.tar.gz
+...

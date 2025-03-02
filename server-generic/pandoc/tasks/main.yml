@@ -1,0 +1,47 @@
+---
+# tasks file for pandoc
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+#- name: xXx
+#  debug: 
+#    msg: "{{ansible_distribution}} - {{ansible_distribution_major_version}} - {{ansible_os_family}}"
+- name: Install pandoc packages
+  package: name={{item}} state=latest
+  become: true
+  with_items:
+    - "{{pandoc_packages}}"
+- name: Install LaTeX packages
+  package: name={{item}} state=latest
+  become: true
+  with_items:
+    - "{{latex_packages}}"
+# from: https://www.hugeserver.com/kb/install-nodejs8-centos7-debian8-ubuntu16/
+- name: Nodejs installation instructions
+  debug: 
+    msg: sudo curl -sL https://rpm.nodesource.com/setup_8.x | sudo bash -
+#- name: Download and execute nodejs and npm install script
+#  shell: curl -sL https://rpm.nodesource.com/setup_8.x | sudo bash -
+#  shell: |
+#    curl -sL https://rpm.nodesource.com/setup_8.x
+#    bash -
+#  become: true
+#- name: Download and execute nodejs and npm install script
+#  shell: curl -sL https://rpm.nodesource.com/setup_8.x | sudo bash -
+- name: Wait for nodejs installes
+  wait_for:
+    path: /usr/bin/node
+    state: present
+- name: Install npm packages
+  npm:
+    name: "{{item}}"
+    global: yes
+    state: latest
+  with_items:
+    - "{{npm_packages}}"
+  environment:
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD: false
+  become: true
+...

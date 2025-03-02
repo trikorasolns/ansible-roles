@@ -1,0 +1,61 @@
+---
+# tasks file for artifactory
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install required packages
+  package: name={{item}} state=latest
+  become: true
+  with_items:
+    - "{{required_packages}}"
+- name: Configure Artifatory Repo
+  shell: wget -O /etc/yum.repos.d/bintray-jfrog-artifactory-rpms.repo https://bintray.com/jfrog/artifactory-rpms/rpm
+  become: true
+- name: Install Artifatory packages
+  package: name={{item}} state=latest
+  become: true
+  with_items:
+    - "{{artifactory_packages}}"  
+- name: Apply Tomcat configuration
+  copy:
+    src: files/tomcat/conf/server.xml
+    dest: /opt/jfrog/artifactory/tomcat/conf/server.xml
+#    owner: root
+#    group: root
+    mode: 0644
+    backup: yes
+  become: true
+#  notify: Restart Artifactory
+- name: Update Artifactory service descriptor
+  copy:
+    src: systemd/artifactory.service
+    dest: /etc/systemd/system/artifactory.service
+#    owner: root
+#    group: root
+    mode: 0755
+    backup: yes
+  become: true
+- name: Apply database definition
+  template:
+    src: "../templates/db/postgresql.properties.j2"
+    dest: "/var/opt/jfrog/artifactory/etc/db.properties"
+    owner: artifactory
+    group: artifactory
+    mode: 0640
+  become: true
+  notify: Restart Artifactory
+- name: firewalld - Open Artifactory ports
+  firewalld:
+    zone: public
+    port: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - 8180/tcp
+    - 8019/tcp
+    - 8040/tcp
+  become: true
+  notify: Restart firewalld
+...

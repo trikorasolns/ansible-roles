@@ -1,0 +1,5 @@
+---
+# vars file for common
+plugins_to_install:
+  - pipeline-utility-steps-plugin
+...

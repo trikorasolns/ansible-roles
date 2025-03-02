@@ -1,0 +1,15 @@
+---
+# tasks file for common
+
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+  #tags: rhbase
+
+#- name: install elpel repo
+#  dnf: name=epel-release state=present
+
+- include: selinux.yml
+- include: ntp.yml
+- include: motd.yml

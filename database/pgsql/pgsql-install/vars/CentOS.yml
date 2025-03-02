@@ -1,0 +1,14 @@
+---
+pgsql_packages:
+  - postgresql-server
+  - postgresql-contrib
+pgsql_packages_version:
+  10:
+    - postgresql10-server
+    - postgresql10-contrib
+pgsql_python_libraries:
+  - python-psycopg2
+
+firewall_service:
+  - postgresql
+...

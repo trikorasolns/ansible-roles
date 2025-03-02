@@ -1,0 +1,47 @@
+---
+# tasks file for jenkins
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install TFTP packages
+  package: 
+    name: "{{tftp_packages}}" 
+    state: present
+  become: true
+- name: Enable and start XINETD service
+  systemd:
+    state: started
+    enabled: yes
+    name: xinetd
+  become: true
+- name: Template TFTP
+  template:
+    src: ../templates/{{ansible_fqdn}}/tftp.j2
+    dest: /etc/xinetd.d/tftp
+    mode: 0644
+  become: true
+  notify: Restart xinetd
+- name: Set /var/lib/tftpboot permissions 
+  file:
+    path: /var/lib/tftpboot
+    state: directory
+    mode: 0777
+    recurse: yes
+  become: true
+  notify: Restart xinetd
+- name: SELinux tftp permissions
+  shell: "setsebool -P tftp_anon_write 1"
+  become: true
+- name: firewalld - Open http ports
+  firewalld:
+    service: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{firewall_services}}"
+  become: true
+  notify: Restart firewalld
+...
+

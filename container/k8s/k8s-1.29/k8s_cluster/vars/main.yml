@@ -1,0 +1,24 @@
+# containerd
+containerd_packages:
+  - containerd.io
+  - containernetworking-plugins
+
+containerd_dependencies:
+  - yum-utils
+  - device-mapper-persistent-data
+  - lvm2
+
+docker_old_packages:
+  - docker
+  - docker-client
+  - docker-client-latest
+  - docker-common
+  - docker-latest
+  - docker-latest-logrotate
+  - docker-logrotate
+  - docker-engine
+
+k8s_packages:
+- kubectl-{{ k8s_version }}
+- kubeadm-{{ k8s_version }}
+- kubelet-{{ k8s_version }}

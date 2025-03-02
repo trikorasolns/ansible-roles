@@ -1,0 +1,10 @@
+---
+# vars file for common
+remmina_packages:
+  - remmina
+  - remmina-plugins-rdp
+  - remmina-plugins-vnc
+  - remmina-plugins-xdmcp
+remmina_gnome:
+  - remmina-gnome-session
+...

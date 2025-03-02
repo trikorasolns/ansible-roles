@@ -1,0 +1,8 @@
+---
+# handlers file for common
+- name: Restart Apache Http
+  service:
+    name: httpd
+    state: restarted
+  become: true
+...

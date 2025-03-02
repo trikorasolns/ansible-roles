@@ -1,0 +1,128 @@
+---
+# https://oracle-base.com/articles/12c/oracle-db-12cr1-installation-on-oracle-linux-6
+- include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      skip: true
+#- name: Install packages
+#  package: name=python2-mysql state=present
+#  become: true
+- name: Install required libraries
+  package:
+    name: "{{required_packages}}"
+    state: present
+  become: true
+- name: Configure sysctl
+  copy:
+    src: usr/lib/sysctl.d/80-ora12c.conf
+    dest: /usr/lib/sysctl.d/80-ora12c.conf
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+- name: Apply kernel parameters
+  command: "/sbin/sysctl -p"
+  register: sysctl_reg
+  become: true
+- name: set limits
+  pam_limits:
+    domain: "{{ item.domain }}"
+    limit_type: "{{item.limit_type}}"
+    limit_item: "{{ item.limit_item }}"
+    value: "{{ item.value }}"
+  with_items:
+    - "{{ limits_conf_settings }}"
+  become: true
+  register: limits_result
+- name: Create Oracle groups
+  group:
+    gid: "{{item.gid}}"
+    name: "{{item.name}}"
+    state: present
+  with_items:
+    - "{{ oracle_groups }}"
+  become: true
+- name: Add the oracle user
+  user:
+    name: oracle
+    password: "{{oracle_password}}"
+    comment: Oracle
+    uid: 54321
+    group: oinstall
+    groups: dba,oper,backupdba,dgdba,kmdba
+  become: true
+- name: Put SELinux in permissive mode
+  selinux:
+    policy: targeted
+    state: permissive
+  become: true
+- name: Update the /etc/hosts file with node name
+  lineinfile:
+    path: "/etc/hosts"
+    regexp: "{{ ansible_ssh_host }}\t{{ ansible_fqdn }}"
+    line: "{{ ansible_ssh_host }}\t{{ ansible_fqdn }}"
+    state: present
+    backup: yes
+  register: etchostsupdate
+  tags: etchostsupdate
+  become: true
+#  groupadd -g 54321 oinstall
+#  groupadd -g 54322 dba
+#  groupadd -g 54323 oper
+#  #groupadd -g 54324 backupdba
+#  #groupadd -g 54325 dgdba
+#  #groupadd -g 54326 kmdba
+#  #groupadd -g 54327 asmdba
+#  #groupadd -g 54328 asmoper
+#  #groupadd -g 54329 asmadmin
+#
+#  useradd -u 54321 -g oinstall -G dba,oper oracle
+- name: Create oracle home
+  file:
+    path: /ora01/app/oracle/product/12.1.0/db_1
+    state: directory
+    mode: '0755'
+    owner: oracle
+    group: oinstall
+  become: true
+- name: Chown Oracle root directory to Oracle
+  file:
+    path: /ora01
+    state: directory
+    owner: oracle
+    group: oinstall
+    recurse: yes
+  become: true
+- name: Change software folder ownership to Oracle
+  file:
+    path: "{{sw_root_folder}}"
+    state: directory
+    owner: oracle
+    group: oinstall
+    recurse: yes
+  become: true
+- name: template db_install.rsp response file
+  template:
+    src: ../templates/db_install.rsp.j2
+    dest: "{{reponse_file_folder}}/db_install.rsp"
+    owner: oracle
+    group: oinstall
+    mode: '0660'
+  become: true
+- name: Reboot immediately if there was a change.
+  shell: "sleep 5 && reboot"
+  async: 1
+  poll: 0
+  when: (limits_result is changed) or (selinux_result is changed)
+  become: true
+- name: Wait for server to restart
+  wait_for_connection:
+    connect_timeout: 20
+    sleep: 5
+    delay: 5
+    timeout: 300
+  when: (limits_result is changed) or (selinux_result is changed)
+...

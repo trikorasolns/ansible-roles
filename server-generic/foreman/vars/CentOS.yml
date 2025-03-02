@@ -1,0 +1,31 @@
+---
+required_packages:
+    - epel-release
+#    - java-1.8.0-openjdk
+#    - java-1.8.0-openjdk-devel
+    - puppet-agent
+foreman_packages:
+    - foreman-installer
+foreman_extra_packages:
+    - foreman-libvirt
+    - foreman-ovirt
+    - foreman-plugin
+    - foreman-selinux
+    - foreman-console
+    - foreman-compute
+    #- foreman-test
+    - foreman-vmware
+    - msgpack
+    - foreman-proxy 
+dhcp_packages:
+    - dhcp
+    - tfm-rubygem-foreman_dhcp_browser
+    - rubygem-smart_proxy_dhcp_device42
+    - rubygem-smart_proxy_dhcp_infoblox
+    - rubygem-smart_proxy_dhcp_remote_isc
+tftp_packages:
+    - tftp
+    - tftp-server
+    - xinetd
+...
+# foreman-bootloaders-redhat foreman-bootloaders-redhat-tftpboot foreman-discovery-image-service tfm-rubygem-ovirt_provision_plugin tfm-rubygem-foreman_rescue rubygem-smart_proxy_monitoring 

@@ -1,0 +1,26 @@
+---
+# tasks file for plugin_dnsname
+- name: Install required packages
+  package:
+    name: "{{dnsname_packages}}"
+    state: present
+  become: true
+
+- name: Git clone github.com/containers/dnsname
+  shell: "git clone http://github.com/containers/dnsname"
+
+- name: Build
+  shell: "make"
+  args:
+    chdir: "${HOME}/dnsname"
+
+- name: Build
+  shell: "make install"
+  args:
+    chdir: "${HOME}/dnsname PREFIX=/usr --"
+  become: true
+
+- name: Create network
+  shell: "podman network create cninet"
+  become: true
+...

@@ -1,0 +1,30 @@
+---
+# tasks file for jenkins
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install RAID packages
+  yum: 
+    name: "{{raid_packages}}"
+    state: present
+  become: true
+- name: Change fstab
+  shell: "grep \"{{fstab_dev_name}}\" /etc/fstab"
+  register: fstab_grep
+- name: Add volume group to fstab
+  lineinfile:
+    dest: /etc/fstab
+    line: "{{fstab_raid}}"
+  when: fstab_grep.stdout != ""
+  become: true
+- name: Change volume group in fstab
+  replace:
+    dest    : /dir/file
+    replace : {{ fstab_raid }}
+    regexp  : '{{ fstab_dev_name }}'
+    backup  : yes
+  when: fstab_grep.stdout == ""
+  become: true
+...

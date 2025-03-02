@@ -1,0 +1,26 @@
+---
+# tasks file for common
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: install base libraries
+  package: 
+    name: "{{base_dependencies}}"
+    state: present
+  become: true
+#- name: install elpel repo
+#  dnf: name=epel-release state=present
+#- name: install ntp
+#  package: name=unzip state=present
+# Replace ntp with chrony
+- include: commandline.yml
+- include: ntp.yml
+- include: motd.yml
+- include: journal.yml
+- name: set timezone to Europe/Madrid
+  timezone:
+    name: Europe/Madrid
+  become: true
+...

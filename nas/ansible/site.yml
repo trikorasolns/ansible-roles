@@ -1,0 +1,12 @@
+---
+# file: install-mysql-playbook.yml
+- name: NAS
+  hosts: nas
+  gather_facts: yes
+  roles: 
+    - common
+    - nfs
+    - iscsi
+    - raid
+    - webdav
+...

@@ -1,0 +1,24 @@
+---
+pandoc_packages:
+  - pandoc
+  - pandoc-pdf
+  - pandoc-citeproc
+  - python2-pypandoc
+  - chromium
+#  - npm
+npm_packages:
+  - minimatch
+#  - chromium
+  - puppeteer
+  - mermaid-filter
+latex_packages:
+  - texlive 
+#  - texlive-latex 
+  - texlive-xetex
+  - texlive-collection-latex
+#  - texlive-collection-latexrecommended
+#  - texlive-xetex-def
+  - texlive-collection-xetex
+#  - texlive-collection-fontsextra
+#  - texlive-collection-latexextra
+...

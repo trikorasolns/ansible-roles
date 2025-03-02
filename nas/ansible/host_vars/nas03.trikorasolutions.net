@@ -1,0 +1,4 @@
+---
+fstab_dev_name: /dev/mapper/vg1001-lv
+fstab_raid: /dev/mapper/vg1001-lv /mnt/data btrfs   defaults        0       0
+...

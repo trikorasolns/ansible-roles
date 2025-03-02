@@ -1,0 +1,6 @@
+- name: Install imaging tools
+  package:
+    name: "{{ dev_packages }}"
+    state: present
+  become: true
+...

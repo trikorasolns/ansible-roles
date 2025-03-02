@@ -1,0 +1,6 @@
+# /var/opt/jfrog/artifactory/etc/db.properties
+type=postgresql
+driver=org.postgresql.Driver
+url=jdbc:postgresql://{{artifactory_db_host}}:{{artifactory_db_port}}/{{artifactory_db_sid}}
+username={{artifactory_db_user}}
+password={{artifactory_db_pwd}}

@@ -1,0 +1,8 @@
+---
+# file: nfs.yml
+- name: NFS
+  hosts: nfs
+  gather_facts: yes
+  roles: 
+    - nfs
+...

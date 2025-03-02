@@ -1,0 +1,31 @@
+---
+# tasks file for oVirt engine
+# from: https://www.ovirt.org/documentation/install-guide/chap-Installing_oVirt.html
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: Update repositories
+  command: yum update -y
+  become: true
+
+- name: Install gluster repository
+  package:
+    name: "{{ gluster_server_repo_packages }}"
+    state: present
+  when: "gluster_server_repo_packages is defined"
+  become: true
+
+- name: Install gluster packages
+  package:
+    name: "{{ gluster_server_packages }}"
+    state: present
+  become: true
+
+# enable glusterd service
+
+# # firewall-cmd --add-service=glusterfs --permanent
+# # firewall-cmd --reload
+...

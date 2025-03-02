@@ -1,0 +1,27 @@
+---
+# tasks file for cockpit
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install required repos
+  package:
+    name: "{{required_repos}}"
+    state: present
+  become: true
+  when: required_repos is defined
+#- name: Install Required packages
+#  package:
+#    name: "{{required_packages}}"
+#    state: present
+#  become: true
+- name: Install Python packages
+  package:
+    name: "{{python_packages}}"
+    state: present
+  become: true
+#- name: Enable python36 bash
+#  shell:
+#    cmd: "scl enable python36 bash"
+#  become: true
+...

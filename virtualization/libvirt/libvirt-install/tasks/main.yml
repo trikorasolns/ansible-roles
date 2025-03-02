@@ -1,0 +1,33 @@
+---
+# tasks file for libvirt-install
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: "Install virtualization packages"
+  package:
+    name: "{{ virtualization_packages }}"
+    state: present
+  become: true
+
+- name: "Install libvirt cockpit packages"
+  package:
+    name: "{{ virtualization_cockpit_packages }}"
+    state: present
+  become: true
+
+- name: "Enable libvirtd startup"
+  systemd:
+    name: libvirtd
+    enabled: yes
+    state: restarted
+    daemon_reload: yes
+  become: true
+
+- name: "Add the connection user to the libvirt group"
+  user:
+    name: "{{ ansible_user }}"
+    groups: "libvirt"
+  become: true
+...

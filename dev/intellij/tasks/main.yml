@@ -1,0 +1,50 @@
+---
+# tasks file for common
+- name: Download intellij
+  get_url:
+    url: "{{intellij_url}}"
+    dest: "/tmp/intellij.tar.gz"
+- name: Create IntelliJ tmp folder
+  file:
+    path: '/tmp/intellij'
+    state: directory
+  become: true
+- name: Unarchive
+  unarchive:
+    src: "/tmp/intellij.tar.gz"
+    dest: "/tmp/intellij/"
+    remote_src: true
+  become: true
+- name: Unarchived folder name
+  command: 'ls /tmp/intellij/'
+  register: intellij_folders
+- debug: "msg={{ intellij_folders.stdout_lines[0] }}"
+- name: Create IntelliJ folder
+  file:
+    path: '/opt/intellij'
+    state: directory
+  become: true
+  when: delete_intellij_folder is defined and delete_intellij_folder == true
+- name: Move folder
+  command: "mv /tmp/intellij/{{ intellij_folders.stdout_lines[0] }}/ /opt/intellij/"
+  become: true
+- name: Change owner
+#  command: "chown \"{{owner_user}}\":\"{{owner_user}}\" -R /opt/intellij"
+  file:
+    path: '/opt/intellij'
+    state: directory
+    owner: "{{owner_user}}"
+    group: "{{owner_user}}"
+    recurse: yes
+  become: true
+- name: Copy desktop file
+  copy:
+    src: "desktop/intellij.desktop"
+    dest: "/usr/share/applications/intellij.desktop"
+  become: true
+- name: Remove IntelliJ tmp folder
+  file:
+    path: '/tmp/intellij'
+    state: absent
+  become: true
+...

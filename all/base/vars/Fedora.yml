@@ -1,0 +1,7 @@
+# roles/rh-base/vars/Fedora.yml
+---
+base_dependencies:
+  - firewalld
+  - pciutils
+  - screen
+...

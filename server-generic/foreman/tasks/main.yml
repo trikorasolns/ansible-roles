@@ -1,0 +1,60 @@
+---
+# tasks file for jenkins
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install required packages
+  yum: 
+    name: "{{required_packages}}"
+    state: present
+  become: true
+- name: Install Puppet repository
+  yum: 
+    name: https://yum.puppetlabs.com/puppet5/puppet5-release-el-7.noarch.rpm
+    state: present
+  become: true
+- name: Install Foreman repository
+  yum: 
+    name: https://yum.theforeman.org/releases/1.20/el7/x86_64/foreman-release.rpm
+    state: present
+  become: true
+- name: Install Foreman packages
+  package:
+    name: "{{foreman_packages}}" 
+    state: present
+  become: true
+  register: foreman_pack_install
+- name: Install Foreman extra packages
+  package: 
+    name: "{{foreman_extra_packages}}" 
+    state: present
+  become: true
+# sudo chmod 777 /var/lib/tftpboot
+- name: Install Foreman
+  shell: foreman-installer
+  become: true
+  register: foreman_install_result
+  when: foreman_pack_install.changed
+  tags: ['reinstall-foreman', 'never']
+- name: firewalld - Open ports for services
+  firewalld:
+    service: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{firewall_services}}"
+  become: true
+  notify: Restart firewalld
+- name: firewalld - Open ports
+  firewalld:
+    zone: public
+    port: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{firewall_ports}}"
+  become: true
+  notify: Restart firewalld
+...

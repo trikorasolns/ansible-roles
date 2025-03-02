@@ -1,0 +1,22 @@
+---
+# tasks file for podman uninstall
+# rm -rf /etc/containers/* /var/lib/containers/* /etc/docker /etc/subuid* /etc/subgid*
+#    yum remove buildah skopeo podman containers-common atomic-registries docker
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+
+- name: "Remove /etc/containers"
+  file:
+    state: absent
+    path: "{{ item }}"
+  loop:
+    - "/etc/containers/"
+    - "/var/lib/containers/"
+    - "/etc/docker/"
+    - "/etc/subuid"
+    - "/etc/subgid"
+  become: true
+...

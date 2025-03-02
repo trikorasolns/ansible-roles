@@ -1,0 +1,34 @@
+---
+# vars file for common
+image_packages:
+  - gimp
+  - inkscape
+  - digikam
+  - git
+  - texlive
+  - ansible
+  - apmd
+  - dconf-editor
+  - acpi
+  - acpitool
+  - acpid
+  - apmd
+  - geany
+  - geany-plugins-latex
+  - geany-plugins-addons
+  - geany-plugins-geanyvc
+  - geany-plugins-geanymacro
+  - geany-plugins-common
+  - geany-plugins-pretty-printer
+  - geany-plugins-projectorganizer
+  - geany-plugins-markdown
+  - geany-plugins-autoclose
+  - geany-plugins-shiftcolumn
+  - geany-plugins-git-changebar
+  - geany-plugins-lineoperations
+  - geany-plugins-codenav
+  - geany-plugins-lipsum
+  - geany-plugins-spellcheck
+  - geany-plugins-xmlsnippets
+  - geany-themes
+...

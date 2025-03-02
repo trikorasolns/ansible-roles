@@ -1,0 +1,18 @@
+---
+required_packages:
+    - epel-release
+    - java-1.8.0-openjdk
+    - java-1.8.0-openjdk-devel
+jenkins_packages:
+    - jenkins
+    - git
+    - ansible
+    - ansible-doc
+    - ansible-inventory-grapher
+    - ansible-lint
+    - ansible-openstack-modules
+    - ansible-review
+    - python2-ansible-runner
+    - python2-ansible-tower-cli
+    - kubernetes-ansible
+...

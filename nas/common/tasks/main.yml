@@ -1,0 +1,15 @@
+---
+# tasks file for jenkins
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+#- name: Install nfs utilities, enable and start services:
+# yum install -y nfs-utils
+- name: Install NAS packages
+  yum: 
+    name: "{{nas_packages}}"
+    state: present
+  become: true
+...

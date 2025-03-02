@@ -1,0 +1,6 @@
+---
+# vars file for common
+virtualization_packages:
+  - "@Virtualization"
+  - openssh-askpass
+...

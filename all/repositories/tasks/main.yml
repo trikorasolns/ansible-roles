@@ -1,0 +1,21 @@
+---
+# tasks file for repositories
+
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: apply repository template
+  template:
+    src: "{{yum_repo_file}}.j2"
+    dest: /etc/yum.repos.d/yum_repo_file
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+- name: yum-clean-metadata
+  command: yum clean metadata
+  args:
+    warn: no
+  become: true
+...

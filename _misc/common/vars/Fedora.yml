@@ -1,0 +1,55 @@
+# roles/rh-base/vars/Fedora.yml
+---
+ntp_daemon: ntpd
+
+rhbase_systemd_services:
+  - systemd-journald.service
+  - systemd-tmpfiles-setup-dev.service
+  - systemd-tmpfiles-setup.service
+
+rhbase_dependencies:
+  - libselinux-python
+  - libsemanage-python
+  - firewalld
+  - python-firewall
+
+rhbase_package_manager: dnf
+rhbase_package_manager_configuration: /etc/dnf/dnf.conf
+
+rhbase_workstation_packages:
+  - gnome-tweak-tool
+  - tnef
+  - tnef-nautilus
+  - keepassxc
+  - icedtea-web
+  - java-1.8.0-openjdk
+  - java-1.8.0-openjdk-devel
+  - xelatex
+  - texlive-scheme-basic
+  - pdflatex
+  - gnome-shell-extension-no-topleft-hot-corner
+  - texlive-sourcesanspro
+  - texlive-fonts-recommended
+  - texlive-xetex
+  - texlive-euenc
+  - texlive-mathspec
+  - texlive-xltxtra
+  - texlive-fonts-recommended
+  - python
+  - texlive-beamer
+  - texlive-col
+  - texlive-abstract
+  - texlive-collection-latex
+  - texlive-lastpage
+#  - xorg-x11-drv-nouveau
+  - libgnome-keyring 
+  - remmina-plugins-secret 
+  - gnome-keyring
+  - libgnome-keyring-dev
+# sudo rpm -v --import https://download.sublimetext.com/sublimehq-rpm-pub.gpg
+# sudo dnf config-manager --add-repo https://download.sublimetext.com/rpm/stable/x86_64/sublime-text.repo
+# sudo dnf install sublime-text
+# sudo dnf search sublime
+# pip install pandoc-mermaid-filter --user
+# pip install pypandoc --user
+...

@@ -1,0 +1,13 @@
+- name: Add Fortinet repository
+  command: yum-config-manager --add-repo  https://repo.fortinet.com/repo/centos/7/os/x86_64/fortinet.repo 
+  become: true
+- name: Reload yum repositories
+  command: yum update
+  become: true
+- name: Install Fortinet client
+  dnf: 
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - forticlient
+  become: true

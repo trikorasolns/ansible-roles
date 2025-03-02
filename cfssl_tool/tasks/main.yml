@@ -1,0 +1,24 @@
+---
+- name: Download cfssl binary
+  get_url:
+    url: "https://pkg.cfssl.org/{{ cfssl_version }}/cfssl_{{ cfssl_os }}-{{ cfssl_arch }}"
+    dest: "{{ cfssl_bin_directory }}/cfssl"
+    mode: 0755
+    owner: "{{ cfssl_owner }}"
+    group: "{{ cfssl_group }}"
+    checksum: "{{ cfssl_checksum }}"
+  become: true
+  tags:
+    - cfssl
+
+- name: Download cfssljson binary
+  get_url:
+    url: "https://pkg.cfssl.org/{{ cfssl_version }}/cfssljson_{{ cfssl_os }}-{{ cfssl_arch }}"
+    dest: "{{ cfssl_bin_directory }}/cfssljson"
+    owner: "{{ cfssl_owner }}"
+    group: "{{ cfssl_group }}"
+    checksum: "{{ cfssljson_checksum }}"
+    mode: 0755
+  become: true
+  tags:
+    - cfssl

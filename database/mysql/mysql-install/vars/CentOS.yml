@@ -1,0 +1,13 @@
+---
+mysql_requirement_libraries:
+  - epel-release
+mysql_required_libraries:
+  - python-devel
+  - MySQL-python
+#  - python2-PyMySQL
+#  - pip
+  - python-pip
+  - gcc
+#pip_mysql_libraries:
+#  - MySQL-python
+...

@@ -1,0 +1,7 @@
+---
+gluster_server_repo_packages:
+  - @virtualization
+
+gluster_server_packages:
+  - glusterfs-server
+...

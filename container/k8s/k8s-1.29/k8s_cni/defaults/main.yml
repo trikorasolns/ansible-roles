@@ -1,0 +1,25 @@
+# default values required
+k8s_maj_min: "1.29"
+k8s_version: "1.29.12"
+remove: false
+remote: true
+
+ingress_host: "{{ ansible_ssh_host }}.nip.io"
+install_docker: false
+install_containerd: true
+
+firewalld_public_ports:
+  - 6443/tcp
+  - 10250/tcp
+  - 10255/udp
+  - 8472/udp
+  - 30000-32767/tcp
+
+firewalld_public_services:
+  - http
+  - https
+
+pod_subnet: 10.244.0.0/16
+service_subnet: 10.96.0.0/12
+
+coreos_flannel_sha_commit: 2140ac876ef134e0ed5af15c65e414cf26827915

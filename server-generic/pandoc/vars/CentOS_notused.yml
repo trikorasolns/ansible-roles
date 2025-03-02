@@ -1,0 +1,7 @@
+---
+pandoc_packages:
+    - pandoc
+    - pandoc-pdf
+    - pandoc-citeproc
+    - python2-pypandoc
+...

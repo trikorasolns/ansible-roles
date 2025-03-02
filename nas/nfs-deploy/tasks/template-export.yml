@@ -1,0 +1,19 @@
+---
+- name: Debug nfs_export_group
+  debug:
+    msg: "{{ nfs_export_group }}"
+- name: Debug nfs_export_group
+  debug:
+    msg: "{{ nfs_export_group.key }} - {{ nfs_export_group.value }}"
+- name: Template exports.d files
+  template:
+    src: "../templates/nfs.exports.j2"
+#    dest: "/etc/exports.d/{{ nfs_export_group.key }}.exports"
+    dest: "/tmp/{{ nfs_export_group.key }}.exports"
+    owner: root
+    group: root
+    mode: u=rw,g=r,o=r
+#  with_fileglob:
+#    - "../templates/*.j2"
+#  become: true
+...

@@ -1,0 +1,92 @@
+---
+# tasks file for jenkins
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Populate service facts
+  service_facts:
+- debug:
+    msg: sonarqube installed!
+  when: "('sonar.service' in services) or ('sonar' in services)"
+- name: Install required packages
+  #package: name={{item}} state=latest
+  package: name={{required_packages}} state=latest
+  become: true
+  #with_items:
+  #  - "{{required_packages}}"
+- name: Add SonarQube user
+  user:
+    name: "{{ sonarqube_user }}"
+    comment: "{{ sonarqube_user }}"
+  become: true
+  when: "('sonarqube.service' not in services) and ('sonarqube' not in services)"
+- name: Check whether sonarqube folder is present
+  stat:
+    path: "/opt/sonarqube"
+  register: sonarqube_folder_stat
+  become: true
+- name: Download SonarQube
+  get_url:
+    url: https://binaries.sonarsource.com/Distribution/sonarqube/sonarqube-7.7.zip
+    dest: /opt
+    mode: 0644
+  become: true
+  when: sonarqube_folder_stat.stat.exists == False
+- name: Unarchive SonarQube
+  unarchive:
+    src: /opt/sonarqube-7.7.zip
+    dest: /opt
+    remote_src: yes
+  become: true
+  when: sonarqube_folder_stat.stat.exists == False
+- name: Move archive folder
+  command: mv /opt/sonarqube-7.7 /opt/sonarqube
+  become: true
+  when: sonarqube_folder_stat.stat.exists == False
+- name: Apply sonarqube definition
+  template:
+    src: "../templates/conf/sonar.properties.j2"
+    dest: "/opt/sonarqube/conf/sonar.properties"
+    owner: "{{ sonarqube_user }}"
+    group: "{{ sonarqube_user }}"
+    mode: 0600
+  become: true
+  notify: Restart SonarQube
+- name: Install sonarqube service
+  template:
+    src: "../templates/systemd/sonar.service.j2"
+    dest: "/etc/systemd/system/sonar.service"
+    mode: 0755
+  become: true
+  notify: Restart SonarQube
+- name: Set SonarQube folder permission
+  file: dest=/opt/sonarqube owner="{{ sonarqube_user }}" group="{{ sonarqube_user }}" recurse=yes
+  become: true
+- name: Force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+  become: true
+- name: firewalld - Open SonarQube ports
+  firewalld:
+    zone: public
+    port: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - 9000/tcp
+  become: true
+  notify: Reload firewalld
+- name: Enable SonarQube service
+  systemd:
+    name: sonar
+    state: started
+    enabled: yes
+  become: true
+- name: Delete installation zip file
+  file:
+    state: absent
+    path: /opt/sonarqube-7.7.zip
+  become: true
+...

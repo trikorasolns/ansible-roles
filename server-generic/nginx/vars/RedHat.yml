@@ -1,0 +1,13 @@
+---
+required_packages:
+    - https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+
+nginx_packages:
+    - nginx
+# SSL
+#    - openssl
+#    - mod_ssl
+firewall_services:
+    - http
+#    - https # SSL
+...

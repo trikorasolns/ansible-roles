@@ -1,0 +1,87 @@
+---
+# In Fedora, CNI plugins get installed in the /usr/libexec/cni directory by default
+- name: "Make a symbolic link to the standard CNI directory /opt/cni/bin"
+  ansible.builtin.file:
+    src: /usr/libexec/cni
+    dest: /opt/cni/bin
+    state: link
+  become: true
+  when: ansible_distribution == 'Fedora'
+
+- name: Copy containerd containerd.conf file
+  template:
+    src: "containerd.conf.j2"
+    dest: "/etc/modules-load.d/containerd.conf"
+  become: true
+
+- name: "modprobe overlay"
+  shell: "modprobe overlay"
+  become: true
+
+- name: "modprobe br_netfilter"
+  shell: "modprobe br_netfilter"
+  become: true
+
+- name: Install dependencies needed by containerd
+  package:
+    name: "{{ containerd_dependencies }}"
+    state: present
+  become: true
+
+- name: Add docker repository
+  yum_repository:
+    name: docker
+    description: Docker
+    baseurl: https://download.docker.com/linux/centos/7/$basearch/stable
+    enabled: 1
+    gpgcheck: 1
+    gpgkey: https://download.docker.com/linux/centos/gpg
+  become: true
+
+- name: Install containerd
+  package:
+    name: "{{ containerd_packages }}"
+    state: present
+  become: true
+
+- name: Ensures /etc/containerd dir exists
+  file:
+    path: "/etc/containerd"
+    state: "directory"
+  become: true
+
+- name: "Configure containerd"
+  shell: "containerd config default > /etc/containerd/config.toml"
+  become: true
+
+- name: "Set root folder"
+  lineinfile:
+    path: "/etc/containerd/config.toml"
+    regexp: '^root = "/var/lib/containerd"'
+    line: 'root = "{{ containerd_root_dir }}"'
+  when: "containerd_root_dir is defined"
+  become: true
+
+# - name: "Set cni folder"
+#   lineinfile:
+#     path: "/etc/containerd/config.toml"
+#     regexp: '^      bin_dir = "/opt/cni/bin"'
+#     line: '      bin_dir = "/usr/libexec/cni"'
+#   become: true
+
+- name: "Set Cgroup folder"
+  lineinfile:
+    path: "/etc/containerd/config.toml"
+    regexp: '^            SystemdCgroup = false'
+    line: '            SystemdCgroup = true'
+  become: true
+
+- name: Start containerd
+  systemd:
+    state: restarted
+    name: containerd
+    enabled: yes
+    daemon_reload: yes
+  become: true
+
+...

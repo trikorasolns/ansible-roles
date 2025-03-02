@@ -1,0 +1,21 @@
+---
+- name: "Set kind executable permission"
+  ansible.builtin.file:
+    path: "/usr/local/bin/kind"
+    state: absent
+  become: true
+
+- name: "Execute docker installation role"
+  include_role:
+    name: '{{ container_role_folder }}/docker'
+  vars:
+    state: absent
+  when: "cri == 'docker'"
+
+- name: "Execute podman installation role"
+  include_role:
+    name: '{{ container_role_folder }}/podman'
+  vars:
+    state: absent
+  when: "cri == 'podman'"
+...

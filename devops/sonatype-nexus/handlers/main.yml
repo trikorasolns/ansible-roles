@@ -1,0 +1,12 @@
+---
+# handlers file for common
+- name: Restart firewalld
+  service: name=firewalld state=restarted
+  become: true
+- name: Reload systemctl
+  command: systemctl daemon-reload
+  become: true
+- name: Restart nexus
+  service: name=nexus state=restarted
+  become: true
+...

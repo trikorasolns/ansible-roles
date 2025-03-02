@@ -1,0 +1,158 @@
+---
+- name: "Validate cni"
+  ansible.builtin.assert:
+    that:
+      - "cni == 'calico' or cni == 'flannel'"
+    fail_msg: "'cni' must be defined and one of calico, flannel"
+    success_msg: "'cni' is {{ cni }}"
+
+- name: "Set default api_server address"
+  ansible.builtin.set_fact:
+    api_server: "{{ ansible_default_ipv4.address }}"
+  when: apiserver_address is undefined
+
+- name: "Set api_server address from apiserver_address variable"
+  ansible.builtin.set_fact:
+    api_server: "{{ apiserver_address }}"
+  when: (apiserver_address is defined) and (apiserver_address|length > 0)
+
+- name: "Include firewalld handlers"
+  ansible.builtin.include_role:
+    name: "sec/firewalld"
+  vars:
+    mascarade: true
+    trusted_sources:
+    - "{{ pod_subnet }}"
+    - "{{ service_subnet }}"
+    firewall_ports: "{{ firewalld_public_ports | default([])}}"
+    firewall_services: "{{ firewalld_public_services | default([])}}"
+
+
+- name: "Flush handlers"
+  ansible.builtin.meta: flush_handlers
+
+- name: Add kubernetes repository
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes
+    baseurl: https://pkgs.k8s.io/core:/stable:/v1.30/rpm/
+    gpgcheck: true
+    repo_gpgcheck: true
+    gpgkey: https://pkgs.k8s.io/core:/stable:/v1.30/rpm/repodata/repomd.xml.key
+    exclude: kubelet kubeadm kubectl cri-tools kubernetes-cni
+  become: true
+  register: k8s_add_repo_res
+  failed_when: "k8s_add_repo_res.rc is defined and k8s_add_repo_res.rc > 0 and k8s_add_repo_res.stderr is defined and 'signature could not be verified for kubernetes' not in k8s_add_repo_res.stderr"
+  when: add_k8s_repo is not defined or add_k8s_repo
+
+- name: "Add kubernetes repository alternative to GPG key failure"
+  yum_repository:
+    name: kubernetes
+    description: Kubernetes
+    baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    gpgcheck: false
+    repo_gpgcheck: false
+    gpgkey: https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    exclude: kube*
+    state: present
+  become: true
+  register: k8s_add_repo_alt_res
+  when: "(add_k8s_repo is not defined or add_k8s_repo) and k8s_add_repo_res is not defined or (k8s_add_repo_res.rc is defined and k8s_add_repo_res.rc > 0 and k8s_add_repo_res.stderr is defined and 'signature could not be verified for kubernetes' in k8s_add_repo_res.stderr)"
+
+- name: "Install Kubernetes packages - {{ k8s_version }}"
+  ansible.builtin.package:
+    name: "{{ packages }}"
+    state: present
+    disable_excludes: kubernetes
+  vars:
+    packages: "{{ k8s_packages }}"
+  become: true
+
+- name: "Disable selinux"
+  shell: |
+    setenforce 0
+    sed -i 's/^SELINUX=.*/SELINUX=disabled/g' /etc/selinux/config
+    getenforce
+  become: true
+
+- name: "Disable SWAP"
+  import_role:
+    name: "core/disable-swap"
+    tasks_from: "Fedora.yml"
+  vars:
+    state: "absent"
+  when: "ansible_distribution == 'Fedora' "
+
+- name: "Start kubelet"
+  systemd:
+    state: started
+    name: kubelet
+    daemon_reload: yes
+    enabled: yes
+  become: true
+
+- name: "Create k8s conf file"
+  template:
+    src: "k8s.conf.j2"
+    dest: /etc/sysctl.d/k8s.conf
+  become: true
+
+- name: " Make k8s conf file take effect"
+  command: "sysctl --system"
+  become: true
+
+- name: "Grant Cluster Admin role to the serviceaccount default of kube-system"
+  shell: |
+    bash -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+  become: true
+
+- name: "Pull k8s linux images for version {{ k8s_version }}"
+  command: "kubeadm config images pull --kubernetes-version {{ k8s_version }}"
+  when: "cri is undefined or (cri is defined and (cri == 'docker' or cri == 'containerd'))"
+  become: true
+
+- name: "Initialize cluster for k8s - {{ k8s_version }}"
+  command: "kubeadm init --pod-network-cidr={{ pod_subnet }} --apiserver-advertise-address={{ api_server }} --kubernetes-version {{ k8s_version }}"
+  register: kubeadm_init_res
+  changed_when: "kubeadm_init_res.rc == 0"
+  failed_when: "kubeadm_init_res.rc != 0  and 'already exists' not in kubeadm_init_res.stderr"
+  become: true
+
+- name: "Print k8s init result"
+  ansible.builtin.debug:
+    msg: "kubeadm init result: {{ kubeadm_init_res }}"
+
+- name: "Copy config file"
+  ansible.builtin.include_role:
+    name: "container/k8s/k8s-{{ k8s_maj_min }}/k8s_config"
+  vars:
+    state: "present"
+
+- name: "Install CNI"
+  ansible.builtin.include_role:
+    name: "container/k8s/k8s-{{ k8s_maj_min }}/k8s_cni"
+  vars:
+    state: "present"
+
+- name: "Run Workloads on the Master Node (taint node)"
+  ansible.builtin.command: "kubectl taint nodes --all node-role.kubernetes.io/master-"
+  register: k8s_node_taint
+  failed_when: "k8s_node_taint.rc != 0 and 'not found' not in k8s_node_taint.stderr"
+
+- name: "Generate ClusterRole file for the sa default and namespace kube-system"
+  ansible.builtin.template:
+    src: "clusterrole-admin.j2"
+    dest: /tmp/clusterrole-admin.yml
+  become: true
+
+- name: "Grant Cluster Admin role to the serviceaccount default of kube-system"
+  ansible.builtin.shell: |
+    kubectl apply -f /tmp/clusterrole-admin.yml
+
+- name: "Create persistence volume"
+  include_tasks: create_single_pv.yml
+  vars:
+    volume_name: "pv{{ item }}"
+  with_sequence: start=1 count=5 format=%03d
+
+...

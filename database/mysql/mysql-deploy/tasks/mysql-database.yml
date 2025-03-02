@@ -1,0 +1,26 @@
+---
+- name: Create {{ loop_item }} database
+  mysql_db:
+    state: present
+    name: "{{ loop_item }}"
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+  become: true
+  notify: Restart MySQL
+- name: Create {{loop_item}} user
+  mysql_user:
+    name: "{{mysql_databases[loop_item].db_user}}"
+    password: "{{mysql_databases[loop_item].db_pw_hash}}"
+    encrypted: yes
+    host: "%"
+    priv: "{{loop_item}}.*:ALL,GRANT"
+    append_privs: yes
+    login_user: root
+    login_password: "{{ mysql_root_password }}"
+    state: present
+...
+#eam: Access denied for user 'weezzi'@'10.8.0.6' (using password: YES)
+#class java.sql.SQLException: Access denied for user 'weezzi'@'10.8.0.6' (using password: YES)
+
+#eam: Access denied for user 'weezzi'@'%' to database 'weezziserver'
+#class com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: Access denied for user 'weezzi'@'%' to database 'weezziserver'

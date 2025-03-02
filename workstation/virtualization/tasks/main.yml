@@ -1,0 +1,8 @@
+---
+# tasks file for common
+- name: Install libraries for virtualization
+  package:
+    name: "{{ virtualization_packages }}"
+    state: present
+  become: true
+...

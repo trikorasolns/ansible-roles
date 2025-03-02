@@ -1,0 +1,53 @@
+---
+# tasks file for common
+- name: Create TOS DI tmp folder
+  file:
+    path: '{{tosdi_tmp_folder}}'
+    state: directory
+  become: true
+- name: Download TOS_DI
+  get_url:
+    url: "{{tosdi_url}}"
+    dest: "{{tosdi_tmp_folder}}/tosdi.zip"
+  when: tos_di_local_file is not defined and tosdi_url is defined
+- name: Unarchive TOS_DI file from local
+  unarchive:
+    src: "{{tos_di_local_file}}"
+    dest: "{{tosdi_tmp_folder}}/"
+    owner: "{{owner_user}}"
+    group: "{{owner_user}}"
+  become: true
+  when: tos_di_local_file is defined
+- name: Unarchived folder name
+  command: 'ls {{tosdi_tmp_folder}}/'
+  register: tosdi_folders
+- debug: "msg={{ tosdi_folders.stdout_lines[0] }}"
+- name: Create TOS DI folder
+  file:
+    path: '{{tosdi_folder}}'
+    state: directory
+  become: true
+  when: delete_intellij_folder is defined and delete_intellij_folder == true
+- name: Move folder
+  command: "mv {{tosdi_tmp_folder}}/{{ tosdi_folders.stdout_lines[0] }}/ {{tosdi_folder}}/"
+  become: true
+- name: Change owner
+#  command: "chown \"{{owner_user}}\":\"{{owner_user}}\" -R {{tosdi_folder}}"
+  file:
+    path: '{{tosdi_folder}}'
+    state: directory
+    owner: "{{owner_user}}"
+    group: "{{owner_user}}"
+    recurse: yes
+  become: true
+- name: Copy desktop file
+  copy:
+    src: "desktop/tos_di.desktop"
+    dest: "/usr/share/applications/tos_di.desktop"
+  become: true
+- name: Remove IntelliJ tmp folder
+  file:
+    path: '{{tosdi_tmp_folder}}'
+    state: absent
+  become: true
+...

@@ -1,0 +1,34 @@
+---
+# journal tasks
+- name: Configure journal max size
+  lineinfile: 
+    dest: /etc/systemd/journald.conf
+    line: "SystemMaxUse=64M"
+    regexp: 'SystemMaxUse'
+  become: true
+  register: journal_conf_result
+- name: Create journal folder
+  file: 
+    path: "/var/log/journal"
+    state: directory
+    mode: 0700
+  become: true
+  register: journal_folder_result
+- name: Restart journal
+  service:
+    name: systemd-journald
+    state: restarted
+  become: true
+  when: journal_conf_result.changed == True or journal_folder_result.changed == True
+...
+# man journalctl
+#       --vacuum-size=, --vacuum-time=
+#           Removes archived journal files until the disk space they use falls below the
+#           specified size (specified with the usual "K", "M", "G", "T" suffixes), or all
+#           journal files contain no data older than the specified timespan (specified with
+#           the usual "s", "min", "h", "days", "months", "weeks", "years" suffixes). Note
+#           that running --vacuum-size= has only indirect effect on the output shown by
+#           --disk-usage as the latter includes active journal files, while the former only
+#           operates on archived journal files.  --vacuum-size= and --vacuum-time= may be
+#           combined in a single invocation to enforce both a size and time limit on the
+#           archived journal files.

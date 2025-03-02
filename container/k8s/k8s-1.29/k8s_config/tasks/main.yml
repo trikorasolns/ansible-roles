@@ -1,0 +1,12 @@
+---
+- name: "Validate state"
+  assert:
+    that: state == "absent" or state == "present"
+    fail_msg: "state must be either absent or present"
+
+- include_tasks: remove.yml
+  when: state == "absent"
+
+- include_tasks: install.yml
+  when: state == "present"
+...

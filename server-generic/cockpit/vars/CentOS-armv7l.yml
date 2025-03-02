@@ -1,0 +1,23 @@
+---
+cockpit_packages:
+    - cockpit
+    - cockpit-system
+    - cockpit-bridge
+    - cockpit-dashboard
+    - cockpit-doc
+    #- cockpit-kdump
+    - cockpit-packagekit
+    - cockpit-pcp
+    #- cockpit-selinux
+    #- cockpit-sosreport
+    #- cockpit-subscriptions
+    - cockpit-tests
+    - cockpit-ws
+    #- cockpit-docker
+    #- cockpit-kubernetes 
+    #- cockpit-machines
+    #- cockpit-machines-ovirt
+    #- cockpit-networkmanager
+    #- cockpit-storaged
+#    - subscription-manager-cockpit
+...

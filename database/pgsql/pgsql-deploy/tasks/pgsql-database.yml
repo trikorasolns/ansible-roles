@@ -1,0 +1,29 @@
+---
+- name: Create pgSql {{ loop_item }} database
+  postgresql_db:
+    state: present
+    name: "{{ loop_item }}"
+    encoding: "{{pgsql_databases[loop_item].encoding}}"
+    lc_collate: "{{pgsql_databases[loop_item].datcollate}}"
+    lc_ctype: "{{pgsql_databases[loop_item].datctype}}"
+    template: "{{pgsql_databases[loop_item].template}}"
+  become: true
+  become_user: "{{postgres_user}}"
+  vars:
+     ansible_ssh_pipelining: yes
+  notify: Restart PostgreSQL
+- name: Create pgSql {{loop_item}} user
+  postgresql_user:
+    name: "{{pgsql_databases[loop_item].db_user}}"
+    password: "{{pgsql_databases[loop_item].db_pw}}"
+    db: "{{ loop_item }}"
+    encrypted: yes
+    # Example privileges string format
+    # INSERT,UPDATE/table:SELECT/anothertable:ALL
+    priv: "ALL"
+    expires: infinity
+    state: present
+  become: true
+  become_user: "{{postgres_user}}"
+  notify: Restart PostgreSQL
+...

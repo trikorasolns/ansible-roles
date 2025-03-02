@@ -1,0 +1,16 @@
+---
+#- name: Initialize pgSql
+#  shell: postgresql-setup initdb
+#  register: pgsql_init_reg
+#  become: true
+#  notify:
+#    - Start PostgreSQL service
+#    - Enable PostgreSQL service
+- name: firewalld - Open PostgreSQL ports
+  firewalld:
+    service: postgresql
+    permanent: yes
+    state: enabled
+  notify: Restart firewalld
+  become: true
+...

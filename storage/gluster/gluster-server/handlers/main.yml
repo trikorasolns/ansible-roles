@@ -1,0 +1,13 @@
+---
+- name: Restart Gluster
+  service: 
+    name: glusterd 
+    state: restarted
+  become: true
+
+- name: Start Gluster
+  service: 
+    name: glusterd 
+    state: started
+  become: true
+...

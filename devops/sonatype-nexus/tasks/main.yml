@@ -1,0 +1,130 @@
+---
+# tasks file for nexus
+- name: Populate service facts
+  service_facts:
+- debug:
+    msg: Nexus installed!
+  when: "('nexus.service' in services) or ('nexus' in services)"
+- include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+    - "{{ ansible_os_family }}.yml"
+- name: Install required packages
+  package: name={{item}} state=latest
+  become: true
+  with_items:
+    - "{{required_packages}}"
+- name: Get java home
+  shell: dirname $(dirname $(readlink -f $(which java)))
+  register: java_home
+- name: firewalld - Open http ports
+  firewalld:
+    service: http
+    permanent: yes
+    state: enabled
+  notify: Restart firewalld
+  become: true
+- name: Copy profile file
+  copy:
+    src: "/etc/profile"
+    dest: "/etc/profile_backup"
+    remote_src: true
+  become: true
+- name: Append JAVA_HOME to profile
+  lineinfile:
+    path: /etc/profile
+    regexp: '^export JAVA_HOME='
+    line: 'export JAVA_HOME={{java_home.stdout}}'
+  become: true
+#- name: Append JRE_HOME to profile
+#  lineinfile:
+#    path: /etc/profile
+#    regexp: '^export JRE_HOME='
+#    line: 'export JRE_HOME={{java_home.stdout}}' 
+#  become: true
+- name: Append INSTALL4J_JAVA_HOME to profile
+  lineinfile:
+    path: /etc/profile
+    regexp: '^export INSTALL4J_JAVA_HOME='
+    line: 'export INSTALL4J_JAVA_HOME={{java_home.stdout}}'
+  become: true
+- name: Add Nexus user
+  user:
+    name: "{{ sonatype_nexus_user }}"
+    comment: "{{ sonatype_nexus_user }}"
+  become: true
+  when: "('nexus.service' not in services) and ('nexus' not in services)"
+- name: Creates directory
+  file: path=/opt/sonatype-nexus state=directory mode=0755 owner="{{ sonatype_nexus_user }}" group="{{ sonatype_nexus_user }}"
+  become: true
+  when: "('nexus.service' not in services) and ('nexus' not in services)"
+- name: Check for installation file
+  stat:
+    path: /opt/sonatype-nexus/sonatype-nexus-{{sonatype_nexus_major_version}}.{{sonatype_nexus_minor_version}}.tar.gz
+  register: tgz_nexus
+- name: Download application
+  get_url:
+    #url: https://download.sonatype.com/nexus/{{sonatype_nexus_major_version}}.{{sonatype_nexus_minor_version}}/latest-unix.tar.gz
+    url: https://download.sonatype.com/nexus/{{sonatype_nexus_major_version}}/nexus-{{sonatype_nexus_major_version}}.{{sonatype_nexus_minor_version}}-unix.tar.gz
+    dest: /opt/sonatype-nexus/sonatype-nexus-{{sonatype_nexus_major_version}}.{{sonatype_nexus_minor_version}}.tar.gz
+    mode: 0440
+  when: "(not tgz_nexus.stat.exists) and ('nexus.service' not in services) and ('nexus' not in services)"
+  become: true
+- name: Change downloaded file permissions
+  file:
+    path: /opt/sonatype-nexus/sonatype-nexus-{{sonatype_nexus_major_version}}.{{sonatype_nexus_minor_version}}.tar.gz
+    state: file
+    owner: "{{ sonatype_nexus_user }}"
+    group: "{{ sonatype_nexus_user }}"
+    mode: 0755
+  become: true
+  when: "('nexus.service' not in services) and ('nexus' not in services)"
+- name: Unarchive
+  unarchive:
+    src: /opt/sonatype-nexus/sonatype-nexus-{{sonatype_nexus_major_version}}.{{sonatype_nexus_minor_version}}.tar.gz
+    dest: /opt/sonatype-nexus/
+    remote_src: yes
+  become: true
+  when: "('nexus.service' not in services) and ('nexus' not in services)"
+- name: Change folder owner recursive
+  file:
+    path: /opt/sonatype-nexus
+    state: directory
+    owner: "{{ sonatype_nexus_user }}"
+    group: "{{ sonatype_nexus_user }}"
+    recurse: yes
+  become: true
+  when: "('nexus.service' not in services) and ('nexus' not in services)"
+- name: Apply vmoptions template
+  template: src=nexus.vmoptions.j2 dest=/opt/sonatype-nexus/nexus-{{sonatype_nexus_major_version}}.{{sonatype_nexus_minor_version}}/bin/ owner=root group=root mode=0755
+  become: true
+  notify:
+    - Reload systemctl
+    - Restart nexus
+  when: "('nexus.service' not in services) and ('nexus' not in services)"
+- name: Install service
+  template: src=nexus.service.j2 dest=/etc/systemd/system/nexus.service owner=root group=root mode=0755
+  become: true
+  notify:
+    - Reload systemctl
+    - Restart nexus
+  when: "('nexus.service' not in services) and ('nexus' not in services)"
+- name: Enable Nexus service
+  systemd:
+    name: nexus
+    state: started
+    enabled: yes
+  become: true
+- name: firewalld - open ports
+  firewalld:
+    zone: public
+#    port: 8081/tcp
+    port: "{{item}}"
+    permanent: yes
+    state: enabled
+  with_items:
+    - "{{repository_ports}}"
+  become: true
+  notify: Restart firewalld
+...

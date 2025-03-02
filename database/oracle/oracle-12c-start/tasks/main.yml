@@ -1,0 +1,20 @@
+---
+# Configure Oracle Net
+- include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      skip: true
+- name: Start Oracle instance - {{oracle_home}}
+  shell: "bin/dbstart {{oracle_home}}"
+  args:
+    chdir: "{{oracle_home}}"
+  become: true
+  become_user: oracle
+  register: dbstart_status
+- name: Debug result
+  debug:
+    msg: "{{dbstart_status}}"
+...

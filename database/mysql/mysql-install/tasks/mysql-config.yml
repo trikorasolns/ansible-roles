@@ -1,0 +1,22 @@
+---
+- name: Apply my.cnf template -- {{my_cnf_template}}
+  template:
+    src: "{{my_cnf_template}}"
+    dest: "/etc/my.cnf.d/{{my_cnf_template | basename | regex_replace('.j2','')}}"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  when: my_cnf_template is defined
+  notify: Restart mysql
+- name: Apply my.cnf file - {{my_cnf_file}}
+  copy:
+    src: "{{my_cnf_file}}"
+    dest: "/etc/my.cnf.d/{{my_cnf_file | basename }}"
+    owner: root
+    group: root
+    mode: 0644
+  become: true
+  when: my_cnf_file is defined
+  notify: Restart mysql
+...

@@ -1,0 +1,5 @@
+# roles/rh-base/vars/Fedora.yml
+---
+yum_repo_file: TrikoraCentos-Base.repo
+
+...

@@ -1,0 +1,10 @@
+# default values required
+k8s_version: "v1.32.0"
+kind_version: "0.26.0"
+
+ingress_host: "{{ ansible_ssh_host }}.nip.io"
+
+firewalld_public_services:
+  - http
+  - https
+

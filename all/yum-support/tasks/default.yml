@@ -1,0 +1,7 @@
+---
+- name: Install Python modules for Ansible
+  shell: "{{yum_install_command}}"
+  args:
+    warn: false # set warn=false to prevent warning
+  become: true
+...

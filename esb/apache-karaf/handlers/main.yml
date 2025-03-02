@@ -1,0 +1,5 @@
+---
+# handlers file for apache-servicemix-install
+- name: Restart firewalld
+  service: name=firewalld state=restarted
+...

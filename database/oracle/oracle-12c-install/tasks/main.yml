@@ -1,0 +1,62 @@
+---
+# https://oracle-base.com/articles/12c/oracle-db-12cr1-installation-on-oracle-linux-6
+- include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+      - "{{ansible_distribution}}-{{ansible_distribution_major_version}}.yml"
+      - "{{ ansible_distribution }}.yml"
+      - "{{ ansible_os_family }}.yml"
+      skip: true
+- name: template db_install.rsp response file
+  template:
+    src: ../templates/db_install.rsp.j2
+    dest: "{{reponse_file_folder}}/db_install.rsp"
+    owner: oracle
+    group: oinstall
+    mode: '0660'
+  become: true
+- name: Run installer
+  shell: "./runInstaller -silent -waitforcompletion -responseFile {{reponse_file_folder}}/db_install.rsp"
+  become: true
+  become_user: oracle
+  args:
+    chdir: "{{sw_root_folder}}/database"
+  register: runInstaller
+- name: Debug runInstaller
+  debug:
+    msg: "{{runInstaller}}"
+- name: Run root script 1
+  command: "./orainstRoot.sh"
+  args:
+    chdir: "/ora01/app/oraInventory"
+  become: true
+- name: Run root script 2
+  command: "./root.sh"
+  args:
+    chdir: "/ora01/app/oracle/product/12.1.0/db_1"
+  become: true
+- name: template Oracle service
+  template:
+    src: "../templates/oracle.service.j2"
+    dest: "/etc/systemd/system/oracle.service"
+  become: true
+  notify: Reload systemctl
+- name: Force systemd to reread configs
+  systemd:
+    daemon_reload: yes
+  become: true
+- name: Enable Oracle service
+  systemd:
+    name: oracle.service
+    state: started
+    enabled: yes
+#  sqlplus / as sysdba
+#  netca -silent -responseFile /home/oracle/database/response/netca.rsp
+#- lsnrctl status
+#- Prepare directories for database datafiles and flash recovery area
+#  mkdir /ora01/app/oracle/oradata
+#  mkdir /ora01/app/oracle/flash_recovery_area
+#- dbca -silent -responseFile /home/oracle/database/response/dbca.rsp
+#- Edit the “/etc/oratab” file to set restart flag for ORA12C to ‘Y’.
+#  ORA12C:/ora01/app/oracle/product/12.1.0/db_1:Y
+...

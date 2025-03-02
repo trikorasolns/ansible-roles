@@ -1,0 +1,29 @@
+# kind-install/tasks/main.yaml
+---
+- name: "Validate state"
+  assert:
+    that:
+      - "state == 'present' or state == 'absent'"
+    fail_msg: "'state' must be defined and one of present or absent"
+    success_msg: "'state' is {{ state }}"
+
+# - name: "Validate cni"
+#   assert:
+#     that:
+#       - "cni == 'calico' or cni == 'flannel'"
+#     fail_msg: "'cni' must be defined and one of calico, flannel"
+#     success_msg: "'cni' is {{ cni }}"
+
+- name: "Validate cri"
+  assert:
+    that:
+      - "cri == 'podman' or cri == 'docker'"
+    fail_msg: "'cri' must be one of podman or docker"
+    success_msg: "'cri' is {{ cri }}"
+
+- include_tasks: install.yml
+  when: state == 'present'
+
+- include_tasks: remove.yml
+  when: state == 'absent'
+...

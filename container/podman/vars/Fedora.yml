@@ -1,0 +1,23 @@
+---
+required_packages:
+#    - yum-utils
+    - dnf-utils
+    - device-mapper-persistent-data
+    - lvm2
+    - python-pip
+
+podman_packages:
+    - podman
+    - podman-compose
+    # - podman-docker
+    - podman-manpages
+    - podman-plugins
+    - podman-tests
+    - pcp-pmda-podman
+
+# pip_packages:
+#     - podman-compose
+
+cockpit_packages:
+    - cockpit-podman
+...

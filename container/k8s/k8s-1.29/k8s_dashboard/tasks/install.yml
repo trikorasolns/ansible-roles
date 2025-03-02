@@ -1,0 +1,43 @@
+---
+- name: "Install Dashboard"
+  shell: |
+    kubectl --kubeconfig={{ ansible_user_dir }}/.kube/config \
+      apply -f \
+      https://raw.githubusercontent.com/kubernetes/dashboard/{{ k8s_dashboard_version }}/aio/deploy/recommended.yaml
+
+- name: "Copy RBAC and SA files"
+  copy:
+    src: "../files/{{ item }}"
+    dest: /tmp/{{ item }}
+  with_items:
+    - sa.yml
+    - rbac.yml
+
+- name: "Create the Service Account, ClusterRoleBinding for the K8s Dashboard admin-user"
+  shell: |
+    kubectl apply -f /tmp/sa.yml
+    kubectl apply -f /tmp/rbac.yml
+  register: result
+  retries: 10
+  delay: 10
+  until: result is not failed
+
+- name: "Collect the dashboard Token"
+  shell: |
+    kubectl -n kubernetes-dashboard get secret $(kubectl -n kubernetes-dashboard get sa/admin-user \
+      -o jsonpath='{.secrets[0].name}') {% raw %}-o go-template='{{.data.token | base64decode}}'{% endraw %}
+  register: k8s_dashboard_token_res
+
+- name: Print kubernetes dashboard URL & Token
+  debug:
+    msg:
+      - "To enable access to the Dashboard using the kubectl command-line tool, run the following command:"
+      - "$ kubectl proxy"
+      - ""
+      - "Kubectl will make Dashboard available at: " 
+      - "http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/"
+      - ""
+      - "Use {{ k8s_dashboard_token_res.stdout }} as token"
+      - ""
+      - "More information on: https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/"
+...

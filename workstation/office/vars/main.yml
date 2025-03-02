@@ -1,0 +1,13 @@
+---
+# vars file for common
+office_packages:
+  - libreoffice
+  - libreoffice-writer
+  - libreoffice-impress
+  - libreoffice-math
+  - libreoffice-graphicfilter
+  - libreoffice-xsltfilter
+  - libstaroffice-tools
+  - libreoffice-gallery-vrt-network-equipment
+  - libreoffice-calc
+...

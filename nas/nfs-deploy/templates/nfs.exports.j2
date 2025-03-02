@@ -1,0 +1,8 @@
+{% for loop_item in nfs_export_group.value %}
+
+#    {{nfs_export_group.value[loop_item].name}}
+{% for share in nfs_export_group.value[loop_item].shares %}
+{{share}}
+{% endfor %}
+
+{% endfor %}

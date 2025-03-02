@@ -1,0 +1,61 @@
+# KVM folders
+
+# VMS08
+/mnt/data/vm-kvm/data vms08(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/data vms08a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/data-import vms08(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/data-import vms08a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/export vms08(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/export vms08a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/iso vms08(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/iso vms08a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+# VMS07
+/mnt/data/vm-kvm/data vms07(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/data vms07a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/data-import vms07(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/data-import vms07a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/export vms07(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/export vms07a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/iso vms07(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/iso vms07a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+# vmsengine
+/mnt/data/vm-kvm/data vmsengine(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/export vmsengine(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/iso vmsengine(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/data 192.168.199.140(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/export 192.168.199.140(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/iso 192.168.199.140(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+# 144
+/mnt/data/vm-kvm/data-import 192.168.199.144(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+# data
+/mnt/data/vm-kvm/data 192.168.199.142(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/data 192.168.199.143(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/data vms04(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/data vms04a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+# export
+/mnt/data/vm-kvm/export 192.168.199.142(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/export 192.168.199.143(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/export vms04(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/export vms04a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+# iso
+/mnt/data/vm-kvm/iso 192.168.199.142(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/iso 192.168.199.143(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+/mnt/data/vm-kvm/iso vms04(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/iso vms04a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+
+#/mnt/data/vm-kvm/ 192.168.199.142(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/ 192.168.199.143(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/ 192.168.199.140(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/ vms04(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/ vms04a(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+#/mnt/data/vm-kvm/ vmsengine(rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+# (rw,sync,no_subtree_check,all_squash,anonuid=36,anongid=36,insecure)
+# (rw,sync,no_subtree_check,insecure)
+# (rw,sync,no_subtree_check, ,anonuid=36,anongid=36)
+# (rw,sync,no_subtree_check)

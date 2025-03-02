@@ -1,0 +1,13 @@
+---
+epel_repo:
+  - epel-release
+required_packages:
+  - yum-utils
+  - device-mapper-persistent-data
+  - lvm2
+  - python-pip
+buildah_packages:
+  - buildah
+dev_packages:
+  - git # to load source code projects
+...
