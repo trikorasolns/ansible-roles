@@ -1,0 +1,35 @@
+= Local Config folder
+:author:    Antonio C.
+:email:     <ac (at) trikorasolutions (dot) com>
+:revdate: {docdate}
+:toc:       left
+:toc-title: Table of Contents
+:icons: font
+:description: Local Config folder
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+== Introduction
+
+[.lead]
+The `_local_config folder` includes configuration that isn't to be pushed 
+ to the GitHub repository.
+
+== `network.yaml`
+
+Yaml file containing network parameters for the project.
+
+It's contents should be the following.
+
+[source,yaml]
+----
+local_domain: acme.org <1>
+external_ip: 169.254.49.255 <2>
+----
+<1> Local network suffix
+<2> Broadcast address for the network
